@@ -12,7 +12,9 @@ Converte il risultato in fonemi compatibili con il motore TTS.
 Esempio
 
 Input: ciao amici
+
 Output translitterato: cjao amiychiy
+
 Output vocale (SAM): voce artificiale che riproduce i suoni italiani approssimati.
 
 Limiti
