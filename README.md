@@ -1,6 +1,6 @@
 TISAM è uno script di translitterazione di fonemi italiani, basato sulla versione JavaScript di SAM – Software Automatic Mouth, 
 il celebre motore di Text-To-Speech (TTS) degli anni ’80 per Commodore 64. L’obiettivo del progetto è adattare la fonetica 
-italianaal motore originale, che nasce per l’inglese, permettendo così di ottenere una resa vocale più vicina possibile ai
+italiana al motore originale, che nasce per l’inglese, permettendo così di ottenere una resa vocale più vicina possibile ai
 suoni della nostra lingua.
 
 Funzionamento
