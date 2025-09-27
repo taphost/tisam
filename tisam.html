@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SAM: Software Automatic Mouth - Improved Italian</title>
+  <style>
+    body {
+      max-width: 16cm;
+      margin: 0 auto;
+      font-family: sans-serif;
+      box-sizing: content-box;
+    }
+    h1, h2 { text-align: center; }
+    label, input { display: inline-block; }
+    label { width: 30% }
+    input { width: 60% }
+    input[type="button"] { width: 49%; }
+    input[type="range"] { transform: rotate(180deg); }
+    textarea {
+      width: 95%;
+      min-height: 60px;
+      resize: vertical;
+    }
+    table { width: 100% }
+    tr th { text-align: left }
+    a { cursor: pointer; }
+    textarea {
+      width: 60%;
+      min-height: 60px;
+      resize: vertical;
+    }
+    #transliterate {
+      width: 49%;
+      display: block;
+      margin-left: auto;
+      margin-top: 0px;
+    }
+  </style>
+</head>
+<body>
+<h1>SAM Software Automatic Mouth</h1>
+
+<!-- Italian Input Form -->
+<form>
+  <h2>Translitteratore Italiano</h2>
+  <p>
+    <strong>Uso:</strong> Inserisci del testo italiano qui sotto e premi "Translittera" per convertirlo in una forma leggibile da SAM. Il testo convertito apparirà automaticamente nel campo "Text to speak".
+  </p>
+  <div>
+    <label for="italianinput">Testo in italiano:</label>
+    <textarea id="italianinput">Ciao! belli come va ?</textarea>
+    <input type="button" id="transliterate" value="Translittera">
+  </div>
+</form>
+<hr>
+
+<h2>What is SAM?</h2>
+<p>
+Sam is a very small Text-To-Speech (TTS) program written in Javascript,
+that runs on most popular platforms. It is an adaption to Javascript of
+the speech software SAM (Software Automatic Mouth) for the Commodore
+C64 published in the year 1982 by Don't Ask Software
+(now SoftVoice, Inc.). It includes a Text-To-Phoneme converter called
+reciter and a Phoneme-To-Speech routine for the final output.
+</p>
+<p>
+Currently compatible with Firefox, Chrome, Safari + iOS.
+The conversion was done by hand from the C source code by
+<a href="https://github.com/s-macke/SAM">Sebastian Macke</a>,
+and the refactored versions by
+<a href="https://github.com/vidarh/SAM">Vidar Hokstad</a> and
+<a href="https://github.com/8BitPimp/SAM">8BitPimp</a>
+</p>
+<script src="samjs.min.js"></script>
+<script>
+  const opts = {debug: 1, pitch: 64, speed: 72, mouth: 128, throat: 128};
+  const presets = {
+    sam:               {speed: 72, pitch: 64, throat: 128, mouth: 128},
+    elf:               {speed: 72, pitch: 64, throat: 110, mouth: 160},
+    little_robot:      {speed: 92, pitch: 60, throat: 190, mouth: 190},
+    stuffy_guy:        {speed: 82, pitch: 72, throat: 110, mouth: 105},
+    little_old_lady:   {speed: 82, pitch: 32, throat: 145, mouth: 145},
+    extra_terrestrial: {speed: 100, pitch: 64, throat: 150, mouth: 200},
+  };
+
+  // Improved Italian to pseudo-English transliteration function
+  function transliterateItalian(text) {
+    let result = text.toLowerCase();
+
+    // Remove accents and diacritics (normalize first)
+    result = result.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+	// 1. CONSONANTS AND GROUPS
+	
+	// GLI rules
+	result = result.replace(/\bgli\s+([aeiou])/g, 'lyi $1');  // Gli amici → lyi amiychi
+	result = result.replace(/gli/g, 'ly');                    // famiglia → familya
+
+	// GL followed by [aeou]
+	result = result.replace(/gl([aeou])/g, 'gl$1');          // gloria → gloria
+
+	// GN rules
+	result = result.replace(/\bgn([aeiou])/g, 'nyo$1');       // gnomo → nyomo
+	result = result.replace(/gn([aeiou])/g, 'ni$1');          // dignità → diniyty
+	result = result.replace(/gn/g, 'ny');                     // general gn → ny
+
+	// SCE/SCI rules
+	result = result.replace(/sc([ei])/g, 'sh$1');             // scena → shena
+	result = result.replace(/sc[ei]\b/g, 'she');             // SCI at end of word: inserisce → inserishe, costruisci → costruishe
+
+	// Double RR for emphasis
+	result = result.replace(/rr/g, 'rrr');                    // carro → karrro
+
+	// Complex consonant combinations  
+	result = result.replace(/ch([ei])/g, 'k$1');              // che → ke
+	result = result.replace(/cc([ei])(nn|ss|tt|ll|mm|pp|bb|dd|ff|gg|rr)/g, 'ch$1$2');  // accenno → acchenno
+	result = result.replace(/tt/g, 'ttt');                    // gestisci tt PRIMA
+	result = result.replace(/ce/g, 'che');                    // cena → chena
+	result = result.replace(/ci([aeou])/g, 'chj$1');          // ciao → tchao, cielo → tchelo
+	result = result.replace(/ci/g, 'chi');                    // città → chittà
+	result = result.replace(/c([aou])/g, 'k$1');              // cane → kane
+
+	// Z rules - improved
+	result = result.replace(/([aeiou])zz/g, '$1dz');          // pizza → pidza
+	result = result.replace(/zz/g, 'ts');                     // general zz → ts
+	result = result.replace(/([aeiou])z([aeiou])/g, '$1dz$2'); // casa → kadza
+	result = result.replace(/^z/g, 'dz');                     // zanzara → dzanzara
+	result = result.replace(/z/g, 'ts');                      // generic fallback
+
+	// S rules - sonority
+	result = result.replace(/([aeiou])s([aeiou])/g, '$1z$2'); // casa → kaza
+	// Initial s + vowel remains s (sapore → sapore)
+
+	// Handle X
+	result = result.replace(/x/g, 'ks');                      // taxi → taksi
+
+	// Handle silent H
+	result = result.replace(/h/g, '');                        // hotel → otel
+
+	// Other consonants
+	result = result.replace(/^ps/g, 's');                     // psicologia → sikologia
+	result = result.replace(/ph/g, 'f');                      // filosofia → filosofiya
+	result = result.replace(/th/g, 't');                      // theoria → teoria
+	result = result.replace(/j/g, 'j');                       // deja vu → deja
+
+	// Special words and double consonants emphasis
+	result = result.replace(/accademia/g, 'akkademiya');      // accademia
+	result = result.replace(/eccetera/g, 'echtchetera');      // eccetera
+	result = result.replace(/([bcdfgklmnpqrsvwz])\1/g, '$1$1$1'); // general double consonant emphasis
+	
+	// Correzione per cc + e/i + tt
+	result = result.replace(/c([ei])ttt/g, 'ch$1tt');         // acetttare → achetttare
+
+
+	// Isolated conjunction "e"
+	result = result.replace(/\be\b/g, 'eh');                 // pane e vino → pane eh vino
+
+	// 2. VOWELS AND ATONIC ENDINGS
+
+	// Diphthongs - new ones
+	result = result.replace(/ia/g, 'ya');                     // piano → pyano
+	result = result.replace(/io/g, 'yo');                     // zio → zyo
+	result = result.replace(/ie/g, 'ye');                     // piede → pyede
+	result = result.replace(/iu/g, 'yuw');                    // più → pyuw
+
+	// Existing diphthongs
+	result = result.replace(/ai/g, 'ay');                     // mai → may
+	result = result.replace(/ei/g, 'ey');                     // sei → sey
+	result = result.replace(/oi/g, 'oy');                     // noi → noy
+	result = result.replace(/ui/g, 'uwy');                    // qui → kwiy
+	result = result.replace(/au/g, 'aw');                     // causa → kawsa
+	result = result.replace(/eu/g, 'ehuw');                   // neutro → newtro
+
+	// Special case: soft 'c' → 'c' + 'y' for words like 'ciao', 'cielo', etc.
+	result = result.replace(/ci/g, 'chi');                    // città → chittà
+
+
+	// Vowel transformations
+	result = result.replace(/i/g, 'iy');                      // Italian I
+	result = result.replace(/u/g, 'uw');                      // Italian U
+
+	// Final vowels - atonic endings
+	result = result.replace(/e(?=\s*[.!?,:;]*$)/g, 'eh');     // e seguita da punteggiatura/spazi a fine riga
+	result = result.replace(/o$/g, 'o');                      // final o → pure /o/ not ow
+
+	// 3. FOREIGN LOANS AND SPECIAL SOUNDS
+
+	// Preserve English sh
+	result = result.replace(/show/g, 'show');                 // show remains show
+
+	// Non-Italian ch (like champagne)
+	result = result.replace(/champagne/g, 'shampanye');       // champagne → shampanye
+
+	// Special cases
+	result = result.replace(/buon/g, 'bwon');                 // buongiorno → bwon
+
+
+    return result;
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('speechinput');
+    const italianInput = document.getElementById('italianinput');
+    const controls = {};
+
+    // Transliteration button
+    document.getElementById('transliterate').addEventListener('click', function() {
+      const italianText = italianInput.value;
+      const transliterated = transliterateItalian(italianText);
+      input.value = transliterated;
+    });
+
+    const setOpt = (name, value) => {
+      opts[name] = value;
+      controls[name].value = value;
+      document.getElementById(name + '-lbl').innerText =
+        name.charAt(0).toUpperCase() + name.substring(1) + ': ' + value;
+    };
+    ['speed', 'pitch', 'mouth', 'throat'].forEach((name) => {
+      const e = document.getElementById(name);
+      controls[name] = e;
+      e.onchange = function (e) {
+        setOpt(e.target.id, e.target.value);
+      };
+      e.value = opts[name];
+    });
+    const selectPreset = (name) => {
+      const values = presets[name];
+      ['speed', 'pitch', 'mouth', 'throat'].forEach((name) => {
+        setOpt(name, values[name]);
+      });
+    };
+    selectPreset('sam');
+    Object.keys(presets).forEach((preset) => {
+      document.getElementById('preset_' + preset)
+        .addEventListener('click', () => selectPreset(preset));
+    });
+
+    let speech;
+    document.getElementById('say').addEventListener('click', function (e) {
+      e.preventDefault();
+      if (speech) {
+        speech.abort();
+      }
+      try {
+        if (typeof SamJs === 'undefined') {
+          alert('SAM library not loaded. Please ensure the SAM.js library is properly included.');
+          return;
+        }
+        speech = (new SamJs(opts)).speak(input.value);
+        speech.catch(() => {});
+      } catch (error) {
+        console.error('Error with SAM speech:', error);
+        alert('Error: Unable to generate speech. Please check the SAM library.');
+      }
+    });
+
+    document.getElementById('download').addEventListener('click', function (e) {
+      e.preventDefault();
+      try {
+        if (typeof SamJs === 'undefined') {
+          alert('SAM library not loaded. Please ensure the SAM.js library is properly included.');
+          return;
+        }
+        (new SamJs(opts)).download(input.value);
+      } catch (error) {
+        console.error('Error with SAM download:', error);
+        alert('Error: Unable to generate audio file. Please check the SAM library.');
+      }
+    });
+  });
+</script>
+
+<hr>
+<form>
+  <h2>Speak</h2>
+  <div>
+    <label for="speechinput">Text to speak:</label>
+    <textarea id="speechinput" name="textfield">Hello, my name is SAM.</textarea>
+  <hr>
+    <label id="pitch-lbl" for="pitch">Pitch: 64</label><input type="range" id="pitch" min="0" max="255" value="64">
+    <label id="speed-lbl" for="speed">Speed: 72</label><input type="range" id="speed" min="1" max="255" value="72">
+    <label id="mouth-lbl" for="mouth">Mouth: 128</label><input type="range" id="mouth" min="0" max="255" value="128">
+    <label id="throat-lbl" for="throat">Throat: 128</label><input type="range" id="throat" min="0" max="255" value="128">
+    <input type="button" id="say" value="Say">
+    <input type="button" id="download" value="Download">
+  </div>
+  <hr>
+  <h2>Presets</h2>
+  <table>
+    <thead>
+      <tr><th>Description</th><th>Speed</th><th>Pitch</th><th>Throat</th><th>Mouth</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><a id="preset_sam">SAM</a></td><td>72</td><td>64</td><td>128</td><td>128</td></tr>
+      <tr><td><a id="preset_elf">Elf</a></td><td>72</td><td>64</td><td>110</td><td>160</td></tr>
+      <tr><td><a id="preset_little_robot">Little Robot</a></td><td>92</td><td>60</td><td>190</td><td>190</td></tr>
+      <tr><td><a id="preset_stuffy_guy">Stuffy Guy</a></td><td>82</td><td>72</td><td>110</td><td>105</td></tr>
+      <tr><td><a id="preset_little_old_lady">Little Old Lady</a></td><td>82</td><td>32</td><td>145</td><td>145</td></tr>
+      <tr><td><a id="preset_extra_terrestrial">Extra-Terrestrial</a></td><td>100</td><td>64</td><td>150</td><td>200</td></tr>
+    </tbody>
+  </table>
+</form>
+<hr>
+
+<a href="https://github.com/discordier/sam">Github Repository with the source code</a>
+<a href="https://discordier.github.io/sam/demos.html">List with some demos.</a>
+
+</body>
+</html>
