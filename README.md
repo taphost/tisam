@@ -9,14 +9,6 @@ Analizza il testo in italiano.
 Applica regole di translitterazione per avvicinare la scrittura alla fonetica inglese di SAM.
 Converte il risultato in fonemi compatibili con il motore TTS.
 
-Esempio
-
-Input: ciao amici
-
-Output translitterato: cjao amiychiy
-
-Output vocale (SAM): voce artificiale che riproduce i suoni italiani approssimati.
-
 Limiti
 
 Non perfetto: alcuni conflitti tra regole fonetiche possono produrre risultati imprevisti.
