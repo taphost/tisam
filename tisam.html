@@ -35,6 +35,23 @@
       margin-left: auto;
       margin-top: 0px;
     }
+    #loadfile {
+      width: 49%;
+      display: inline-block;
+      margin-right: 2%;
+    }
+    #file-input {
+      display: none;
+    }
+    .button-container {
+      display: flex;
+      gap: 2%;
+      margin-top: 10px;
+    }
+    .button-container input[type="button"] {
+      width: 49%;
+      margin: 0;
+    }
   </style>
 </head>
 <body>
@@ -44,12 +61,16 @@
 <form>
   <h2>Translitteratore Italiano</h2>
   <p>
-    <strong>Uso:</strong> Inserisci del testo italiano qui sotto e premi "Translittera" per convertirlo in una forma leggibile da SAM. Il testo convertito apparirà automaticamente nel campo "Text to speak".
+    <strong>Uso:</strong> Carica un file .txt oppure inserisci del testo italiano qui sotto e premi "Translittera" per convertirlo in una forma leggibile da SAM. Il testo convertito apparirà automaticamente nel campo "Text to speak".
   </p>
   <div>
     <label for="italianinput">Testo in italiano:</label>
     <textarea id="italianinput">Ciao! ora parlo anche in italiano</textarea>
-    <input type="button" id="transliterate" value="Translittera">
+    <input type="file" id="file-input" accept=".txt" style="display: none;">
+    <div class="button-container">
+      <input type="button" id="loadfile" value="Carica File .txt">
+      <input type="button" id="transliterate" value="Translittera">
+    </div>
   </div>
 </form>
 <hr>
@@ -83,117 +104,179 @@ and the refactored versions by
     extra_terrestrial: {speed: 100, pitch: 64, throat: 150, mouth: 200},
   };
 
-  // Improved Italian to pseudo-English transliteration function
+  // Improved Italian to pseudo-English transliteration function with better character cleaning
   function transliterateItalian(text) {
-    let result = text.toLowerCase();
+    let result = text;
 
-    // Remove accents and diacritics (normalize first)
+    // 1. PULIZIA CARATTERI PROBLEMATICI (prima di tutto)
+    // Rimuovere BOM (Byte Order Mark)
+    result = result.replace(/\uFEFF/g, '');
+    
+    // Rimuovere caratteri di controllo invisibili
+    result = result.replace(/[\u0000-\u001F\u007F-\u009F]/g, '');
+    
+    // Normalizzare tutti i tipi di spazio in spazi normali
+    result = result.replace(/[\u00A0\u1680\u2000-\u200B\u202F\u205F\u3000]/g, ' ');
+    
+    // Sostituire smart quotes e caratteri tipografici
+    result = result.replace(/[""]/g, '"');
+    result = result.replace(/['']/g, "'");
+    result = result.replace(/[–—]/g, "-");
+    result = result.replace(/[…]/g, "...");
+    
+    // Pulire spazi multipli
+    result = result.replace(/\s+/g, ' ');
+    result = result.trim();
+    
+    // Convertire a minuscolo per il processing
+    result = result.toLowerCase();
+
+    // 2. Remove accents and diacritics (normalize first)
     result = result.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-	// 1. CONSONANTS AND GROUPS
-	
-	// GLI rules
-	result = result.replace(/\bgli\s+([aeiou])/g, 'lyi $1');  // Gli amici → lyi amiychi
-	result = result.replace(/gli/g, 'ly');                    // famiglia → familya
+    // 3. SISTEMA DI PAROLE PROTETTE (prima delle altre trasformazioni)
+    const protectedWords = {
+      'puo': 'poowo', 'piu': 'pu', 'gia': 'jiah', 'giu': 'jiuw', 'ahime': 'himeh', 'finche': 'finkeh','perche': 'perkeh', 'benche': 'benkeh', 
+	  'mio': 'meeo', 'mia': 'meea', 'saro': 'sahro', 'faro': 'fahroh', 'sei': 'sehih', 'gioco' : 'g oh ko', 'giochi' : 'g oh ki', 'che' : 'keh'
+    };
 
-	// GL followed by [aeou]
-	result = result.replace(/gl([aeou])/g, 'gl$1');          // gloria → gloria
+    // Array per tenere traccia delle sostituzioni protette
+    const protectedReplacements = [];
+    
+    // FASE 1: Sostituire le parole protette con placeholder
+    Object.keys(protectedWords).forEach((word, index) => {
+      const placeholder = `PROTECTED${index}`;
+      const regex = new RegExp('\\b' + word + '\\b', 'gi');
+      if (result.includes(word)) {
+        result = result.replace(regex, placeholder);
+        protectedReplacements.push({
+          placeholder: placeholder,
+          replacement: protectedWords[word]
+        });
+        console.log(`Sostituito "${word}" con "${placeholder}"`);
+      }
+    });
 
-	// GN rules
-	result = result.replace(/\bgn([aeiou])/g, 'nyo$1');       // gnomo → nyomo
-	result = result.replace(/gn([aeiou])/g, 'ni$1');          // dignità → diniyty
-	result = result.replace(/gn/g, 'ny');                     // general gn → ny
+    // 4. CONSONANTS AND GROUPS (FASE 2: Applicare le regole normali)
+    
+    // GLI rules
+    result = result.replace(/\bgli\s+([aeiou])/g, 'lyi $1');  // Gli amici → lyi amiychi
+    result = result.replace(/gli/g, 'ly');                    // famiglia → familya
 
-	// SCE/SCI rules
-	result = result.replace(/sc([ei])/g, 'sh$1');             // scena → shena
-	result = result.replace(/sc[ei]\b/g, 'she');             // SCI at end of word: inserisce → inserishe, costruisci → costruishe
+    // GL followed by [aeou]
+    result = result.replace(/gl([aeou])/g, 'gl$1');          // gloria → gloria
 
-	// Double RR for emphasis
-	result = result.replace(/rr/g, 'rrr');                    // carro → karrro
+    // GN rules
+    result = result.replace(/\bgn([aeiou])/g, 'nyo$1');       // gnomo → nyomo
+    result = result.replace(/gn([aeiou])/g, 'ni$1');          // dignità → diniyty
+    result = result.replace(/gn/g, 'ny');                     // general gn → ny
 
-	// Complex consonant combinations  
-	result = result.replace(/ch([ei])/g, 'k$1');              // che → ke
-	result = result.replace(/cc([ei])(nn|ss|tt|ll|mm|pp|bb|dd|ff|gg|rr)/g, 'ch$1$2');  // accenno → acchenno
-	result = result.replace(/tt/g, 'ttt');                    // gestisci tt PRIMA
-	result = result.replace(/ce/g, 'che');                    // cena → chena
-	result = result.replace(/ci([aeou])/g, 'chj$1');          // ciao → tchao, cielo → tchelo
-	result = result.replace(/ci/g, 'chi');                    // città → chittà
-	result = result.replace(/c([aou])/g, 'k$1');              // cane → kane
+    // SCE/SCI rules
+    result = result.replace(/sc([ei])/g, 'sh$1');             // scena → shena
+    result = result.replace(/sc[ei]\b/g, 'she');             // SCI at end of word: inserisce → inserishe, costruisci → costruishe
 
-	// Z rules - improved
-	result = result.replace(/([aeiou])zz/g, '$1dz');          // pizza → pidza
-	result = result.replace(/zz/g, 'ts');                     // general zz → ts
-	result = result.replace(/([aeiou])z([aeiou])/g, '$1dz$2'); // casa → kadza
-	result = result.replace(/^z/g, 'dz');                     // zanzara → dzanzara
-	result = result.replace(/z/g, 'ts');                      // generic fallback
+    // Double RR for emphasis
+    result = result.replace(/rr/g, 'rrr');                    // carro → karrro
 
-	// S rules - sonority
-	result = result.replace(/([aeiou])s([aeiou])/g, '$1z$2'); // casa → kaza
-	// Initial s + vowel remains s (sapore → sapore)
+    // Complex consonant combinations  
+    result = result.replace(/ch([ei])/g, 'k$1');              // che → ke
+    result = result.replace(/cc([ei])(nn|ss|tt|ll|mm|pp|bb|dd|ff|gg|rr)/g, 'ch$1$2');  // accenno → acchenno
+    result = result.replace(/tt/g, 'ttt');                    // gestisci tt PRIMA
+    result = result.replace(/ce/g, 'che');                    // cena → chena
+    result = result.replace(/ci([aeou])/g, 'chj$1');          // ciao → tchao, cielo → tchelo
+    result = result.replace(/ci/g, 'chi');                    // città → chittà 
+    result = result.replace(/c([aou])/g, 'k$1');              // cane → kane
 
-	// Handle X
-	result = result.replace(/x/g, 'ks');                      // taxi → taksi
+    // Z rules - improved
+    result = result.replace(/([aeiou])zz/g, '$1dz');          // pizza → pidza
+    result = result.replace(/zz/g, 'ts');                     // general zz → ts
+    result = result.replace(/([aeiou])z([aeiou])/g, '$1dz$2'); // casa → kadza
+    result = result.replace(/^z/g, 'dz');                     // zanzara → dzanzara
+    result = result.replace(/z/g, 'ts');                      // generic fallback
 
-	// Handle silent H
-	result = result.replace(/h/g, '');                        // hotel → otel
+    // S rules - sonority
+    result = result.replace(/([aeiou])s([aeiou])/g, '$1z$2'); // casa → kaza
+    // Initial s + vowel remains s (sapore → sapore)
 
-	// Other consonants
-	result = result.replace(/^ps/g, 's');                     // psicologia → sikologia
-	result = result.replace(/ph/g, 'f');                      // filosofia → filosofiya
-	result = result.replace(/th/g, 't');                      // theoria → teoria
-	result = result.replace(/j/g, 'j');                       // deja vu → deja
+    // Handle X
+    result = result.replace(/x/g, 'ks');                      // taxi → taksi
 
-	// Special words and double consonants emphasis
-	result = result.replace(/accademia/g, 'akkademiya');      // accademia
-	result = result.replace(/eccetera/g, 'echtchetera');      // eccetera
-	result = result.replace(/([bcdfgklmnpqrsvwz])\1/g, '$1$1$1'); // general double consonant emphasis
-	
-	// Correzione per cc + e/i + tt
-	result = result.replace(/c([ei])ttt/g, 'ch$1tt');         // acetttare → achetttare
+    // Handle silent H
+    result = result.replace(/h/g, '');                        // hotel → otel
 
+    // Other consonants
+    result = result.replace(/^ps/g, 's');                     // psicologia → sikologia
+    result = result.replace(/ph/g, 'f');                      // filosofia → filosofiya
+    result = result.replace(/th/g, 't');                      // theoria → teoria
+    result = result.replace(/j/g, 'j');                       // deja vu → deja
 
-	// Isolated conjunction "e"
-	result = result.replace(/\be\b/g, 'eh');                 // pane e vino → pane eh vino
+    // Special words and double consonants emphasis
+    result = result.replace(/accademia/g, 'akkademiya');      // accademia
+    result = result.replace(/eccetera/g, 'echtchetera');      // eccetera
+    result = result.replace(/([bcdfgklmnpqrsvwz])\1/g, '$1$1$1'); // general double consonant emphasis
+    
+    // Correzione per cc + e/i + tt
+    result = result.replace(/c([ei])ttt/g, 'ch$1tt');         // acetttare → achetttare
 
-	// 2. VOWELS AND ATONIC ENDINGS
+    // Isolated conjunction "e"
+    result = result.replace(/\be\b/g, 'eh');                 // pane e vino → pane eh vino
 
-	// Diphthongs - new ones
-	result = result.replace(/ia/g, 'ya');                     // piano → pyano
-	result = result.replace(/io/g, 'yo');                     // zio → zyo
-	result = result.replace(/ie/g, 'ye');                     // piede → pyede
-	result = result.replace(/iu/g, 'yuw');                    // più → pyuw
+    // 5. VOWELS AND ATONIC ENDINGS
 
-	// Existing diphthongs
-	result = result.replace(/ai/g, 'ay');                     // mai → may
-	result = result.replace(/ei/g, 'ey');                     // sei → sey
-	result = result.replace(/oi/g, 'oy');                     // noi → noy
-	result = result.replace(/ui/g, 'uwy');                    // qui → kwiy
-	result = result.replace(/au/g, 'aw');                     // causa → kawsa
-	result = result.replace(/eu/g, 'ehuw');                   // neutro → newtro
+    // Diphthongs - new ones
+    result = result.replace(/ia/g, 'ya');                     // piano → pyano
+    result = result.replace(/io/g, 'yo');                     // zio → zyo
+    result = result.replace(/ie/g, 'ye');                     // piede → pyede
+    result = result.replace(/iu/g, 'yuw');                    // più → pyuw
 
-	// Special case: soft 'c' → 'c' + 'y' for words like 'ciao', 'cielo', etc.
-	result = result.replace(/ci/g, 'chi');                    // città → chittà
+    // Existing diphthongs
+    result = result.replace(/ai/g, 'ay');                     // mai → may
+    result = result.replace(/ei/g, 'ey');                     // sei → sey
+    result = result.replace(/oi/g, 'oy');                     // noi → noy
+    result = result.replace(/ui/g, 'uwy');                    // qui → kwiy
+    result = result.replace(/au/g, 'aw');                     // causa → kawsa
+    result = result.replace(/eu/g, 'ehuw');                   // neutro → newtro
 
+    // Special case: soft 'c' → 'c' + 'y' for words like 'ciao', 'cielo', etc.
+    result = result.replace(/ci/g, 'chi');                    // città → chittà 
 
-	// Vowel transformations
-	result = result.replace(/i/g, 'iy');                      // Italian I
-	result = result.replace(/u/g, 'uw');                      // Italian U
+    // Vowel transformations
+    result = result.replace(/i/g, 'iy');                      // Italian I
+    result = result.replace(/u/g, 'uw');                      // Italian U
 
-	// Final vowels - atonic endings
-	result = result.replace(/e(?=\s*[.!?,:;]*$)/g, 'eh');     // e seguita da punteggiatura/spazi a fine riga
-	result = result.replace(/o$/g, 'o');                      // final o → pure /o/ not ow
+    // Final vowels - atonic endings
+    result = result.replace(/e(?=\s*[.!?,:;]*$)/g, 'eh');     // e seguita da punteggiatura/spazi a fine riga
+    result = result.replace(/o$/g, 'o');                      // final o → pure /o/ not ow
 
-	// 3. FOREIGN LOANS AND SPECIAL SOUNDS
+    // 6. FOREIGN LOANS AND SPECIAL SOUNDS
 
-	// Preserve English sh
-	result = result.replace(/show/g, 'show');                 // show remains show
+    // Preserve English sh
+    result = result.replace(/show/g, 'show');                 // show remains show
 
-	// Non-Italian ch (like champagne)
-	result = result.replace(/champagne/g, 'shampanye');       // champagne → shampanye
+    // Non-Italian ch (like champagne)
+    result = result.replace(/champagne/g, 'shampanye');       // champagne → shampanye
 
-	// Special cases
-	result = result.replace(/buon/g, 'bwon');                 // buongiorno → bwon
+    // Special cases
+    result = result.replace(/buon/g, 'bwon');                 // buongiorno → bwon
 
+    // 7. FILTRO FINALE - mantenere solo caratteri SAM-safe
+    result = result.replace(/[^a-zA-Z0-9\s.,!?;:\-'"]/g, '');
+    
+    // Pulizia finale spazi
+    result = result.replace(/\s+/g, ' ').trim();
+
+    // 8. FASE 3: Ripristinare le parole protette dalle sostituzioni finali
+    console.log("Prima del ripristino:", result);
+    console.log("Sostituzioni da fare:", protectedReplacements);
+    
+    protectedReplacements.forEach(item => {
+      if (result.includes(item.placeholder)) {
+        result = result.replace(new RegExp(item.placeholder, 'g'), item.replacement);
+        console.log(`Ripristinato "${item.placeholder}" → "${item.replacement}"`);
+      }
+    });
+    
+    console.log("Dopo il ripristino:", result);
 
     return result;
   }
@@ -201,11 +284,46 @@ and the refactored versions by
   document.addEventListener('DOMContentLoaded', function() {
     const input = document.getElementById('speechinput');
     const italianInput = document.getElementById('italianinput');
+    const fileInput = document.getElementById('file-input');
     const controls = {};
+
+    // File loading functionality
+    document.getElementById('loadfile').addEventListener('click', function() {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (file && file.type === 'text/plain') {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          let content = e.target.result;
+          
+          // Pulizia aggiuntiva per file encoding
+          content = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+          
+          italianInput.value = content;
+          
+          // Reset del file input per permettere di caricare lo stesso file di nuovo
+          fileInput.value = '';
+        };
+        reader.onerror = function() {
+          alert('Errore nel caricamento del file. Assicurati che sia un file .txt valido.');
+        };
+        // Leggere come UTF-8
+        reader.readAsText(file, 'UTF-8');
+      } else {
+        alert('Per favore seleziona un file .txt valido.');
+      }
+    });
 
     // Transliteration button
     document.getElementById('transliterate').addEventListener('click', function() {
       const italianText = italianInput.value;
+      if (italianText.trim() === '') {
+        alert('Inserisci del testo italiano o carica un file prima di translitterare.');
+        return;
+      }
       const transliterated = transliterateItalian(italianText);
       input.value = transliterated;
     });
