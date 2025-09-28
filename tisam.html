@@ -65,7 +65,7 @@
   </p>
   <div>
     <label for="italianinput">Testo in italiano:</label>
-    <textarea id="italianinput">Ciao! ora parlo anche in italiano</textarea>
+    <textarea id="italianinput">Un saluto a tutti i miei amici italiani!</textarea>
     <input type="file" id="file-input" accept=".txt" style="display: none;">
     <div class="button-container">
       <input type="button" id="loadfile" value="Carica File .txt">
@@ -104,7 +104,7 @@ and the refactored versions by
     extra_terrestrial: {speed: 100, pitch: 64, throat: 150, mouth: 200},
   };
 
-  // Improved Italian to pseudo-English transliteration function with better character cleaning
+  // Funzione migliorata di translitterazione dall'italiano in pseudo-inglese leggibile da SAM
   function transliterateItalian(text) {
     let result = text;
 
@@ -121,7 +121,7 @@ and the refactored versions by
     // Sostituire smart quotes e caratteri tipografici
     result = result.replace(/[""]/g, '"');
     result = result.replace(/['']/g, "'");
-    result = result.replace(/[–—]/g, "-");
+    result = result.replace(/[––—]/g, "-");
     result = result.replace(/[…]/g, "...");
     
     // Pulire spazi multipli
@@ -136,8 +136,30 @@ and the refactored versions by
 
     // 3. SISTEMA DI PAROLE PROTETTE (prima delle altre trasformazioni)
     const protectedWords = {
-      'puo': 'poowo', 'piu': 'pu', 'gia': 'jiah', 'giu': 'jiuw', 'ahime': 'himeh', 'finche': 'finkeh','perche': 'perkeh', 'benche': 'benkeh', 
-	  'mio': 'meeo', 'mia': 'meea', 'saro': 'sahro', 'faro': 'fahroh', 'sei': 'sehih', 'gioco' : 'g oh ko', 'giochi' : 'g oh ki', 'che' : 'keh'
+      // Pronomi
+      'io': 'eeoh', 'tu': 'too', 'lui': 'loowee', 'lei': 'lay',
+      'noi': 'noy', 'voi': 'voy', 'loro': 'loro',
+      // Verbi comuni
+      'sono': 'sohno', 'sei': 'sehih', 'è': 'eh', 'siamo': 'syamo', 'siete': 'syete',
+      'ho': 'oh', 'hai': 'ahy', 'ha': 'ah', 'hanno': 'anno',
+      'puo': 'poowo', 'puoi': 'pooy', 'possiamo': 'possyamo',
+      'devo': 'devoh', 'devi': 'devih', 'deve': 'deveh',
+      'vado': 'vahdo', 'vai': 'vahy', 'va': 'vah', 'andiamo': 'andyamo', 'andate': 'andateh',
+      // Avverbi
+      'gia': 'jiah', 'giu': 'jiuw', 'piu': 'pyu', 'meno': 'meno',
+      'perche': 'perkeh', 'finche': 'finkeh', 'benche': 'benkeh', 'sebbene': 'sebbehneh',
+      'poi': 'poy', 'mai': 'may', 'ora': 'orah', 'qua': 'kwa', 'qui': 'kwi', 'li': 'lee', 'la': 'lah',
+      'fuori': 'fwori', 'dentro': 'dentroh',
+      'si': 'seeh', 'no': 'noh',
+      // Interiezioni
+      'oh': 'ohh', 'eh': 'ehh', 'ah': 'ahh', 'uh': 'uhh', 'mah': 'mah', 'boh': 'boh',
+      // Parole a rischio
+      'ciao': 'chao', 'cielo': 'chelo', 'gioco': 'g oh ko', 'giochi': 'g oh ki', 'gioia': 'joyah',
+      'buono': 'bwonoh', 'buongiorno': 'bwonjorno', 'realta' : 'reh ah ltah', 'paice' : 'peeahceh','dice' : 'dee cheh' , 'dici' : 'dee che',
+      'questo': 'kwesto', 'quello': 'kwello', 'quando': 'kwando', 'quale': 'kwale',
+      // Aggiunte dal file originale
+      'mio': 'meeo', 'mia': 'meea', 'miei': 'mee eh e', 'saro': 'sahro', 'faro': 'fahroh', 'che': 'keh',
+      'ahime': 'himeh'
     };
 
     // Array per tenere traccia delle sostituzioni protette
@@ -237,9 +259,6 @@ and the refactored versions by
     result = result.replace(/au/g, 'aw');                     // causa → kawsa
     result = result.replace(/eu/g, 'ehuw');                   // neutro → newtro
 
-    // Special case: soft 'c' → 'c' + 'y' for words like 'ciao', 'cielo', etc.
-    result = result.replace(/ci/g, 'chi');                    // città → chittà 
-
     // Vowel transformations
     result = result.replace(/i/g, 'iy');                      // Italian I
     result = result.replace(/u/g, 'uw');                      // Italian U
@@ -247,6 +266,7 @@ and the refactored versions by
     // Final vowels - atonic endings
     result = result.replace(/e(?=\s*[.!?,:;]*$)/g, 'eh');     // e seguita da punteggiatura/spazi a fine riga
     result = result.replace(/o$/g, 'o');                      // final o → pure /o/ not ow
+	result = result.replace(/a(?!h)/g, 'ah');                 // TEST A APERTA 
 
     // 6. FOREIGN LOANS AND SPECIAL SOUNDS
 
