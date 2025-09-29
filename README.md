@@ -14,3 +14,8 @@ Limiti
 Non perfetto: alcuni conflitti tra regole fonetiche possono produrre risultati imprevisti.
 Copertura parziale: non tutti i fonemi italiani hanno un corrispettivo diretto nell’inglese di SAM.
 Approssimazioni necessarie: certi suoni vengono resi in maniera vicina, ma non identica.
+
+Bug Noti
+
+L'inserimento di lettere accentate non funziona nello script originale di SAM 
+lo script TISAM rimuove gli accenti prima di translitterarli e inserirli nel form di SAM.
