@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TISAM - Translitteratore Italiano per SAM: Software Automatic Mouth</title>
+  <style>
+    @font-face {
+      font-family: 'C64ProMono';
+      src: url('./fonts/C64_Pro_Mono-STYLE.woff2') format('woff2');
+      font-weight: normal;
+      font-style: normal;
+    }
+    html {
+      background-color: #4040E0;
+    }
+    body {
+      width: 1024px;
+      margin: 20px auto;
+      font-family: 'C64ProMono', sans-serif;
+      font-size: 12px;
+      box-sizing: content-box;
+      padding: 40px;
+      border: 80px solid #A0A0FF;
+      color: #A0A0FF;
+    }
+    h1, h2 { text-align: center; }
+    label, input { display: inline-block; }
+    label { width: 30%; vertical-align: top; }
+    input { width: 60% }
+    input[type="button"] {
+      width: 49%;
+      background-color: #A0A0FF;
+      color: #4040E0;
+      border: 2px solid #A0A0FF;
+      padding: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-family: 'C64ProMono', sans-serif;
+      font-size: 12px;
+    }
+    input[type="button"]:hover {
+      background-color: #B0B0FF;
+    }
+    /* Custom C64 Slider Styles */
+    .slider-container {
+      position: relative;
+      width: 60%;
+      display: inline-block;
+      cursor: pointer;
+      user-select: none;
+      touch-action: none;
+	  margin-bottom: 10px;
+    }
+    
+    .slider-track {
+      position: relative;
+      height: 10px;
+      border: 4px solid #A0A0FF;
+      background: transparent;
+    }
+    
+    .slider-fill {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+      background: #A0A0FF;
+      pointer-events: none;
+    }
+	
+	.slider-thumb:hover {
+	  background: #C0C0FF; 
+	}
+	
+    
+    .slider-thumb {
+      position: absolute;
+      top: 50%;
+      width: 25px;
+      height: 25px;
+      background: #A0A0FF;
+      transform: translate(50%, -50%);
+      cursor: grab;
+      z-index: 1;
+    }
+    
+    .slider-thumb:active {
+      cursor: grabbing;
+    }
+    textarea {
+      width: 100%;
+      min-height: 80px;
+      resize: vertical;
+      box-sizing: border-box;
+      background-color: #4040E0;
+      color: #A0A0FF;
+      border: 4px solid #A0A0FF;
+      font-family: 'C64ProMono', sans-serif;
+      font-size: 12px;
+	  padding: 8px; 
+    }
+    .textarea-label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+      margin-top: 15px;
+    }
+	table { width: 100%; margin: 20px 0; border-collapse: separate; border-spacing: 5px 8px; }
+	tr th { text-align: left; padding-bottom: 2px; }
+	tr td { padding: 5px 0; padding-left: 20px; }
+    a { cursor: pointer; color: #C0C0FF; }
+	a:hover { color: #E0E0FF; }
+    .button-container {
+      display: flex;
+      gap: 2%;
+      margin-top: 10px;
+    }
+    .button-container input[type="button"] {
+      flex: 1;
+      margin: 0;
+    }
+    #file-input {
+      display: none;
+    }
+    
+    /* Modal Styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+    }
+    .modal-overlay.active {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background-color: #4040E0;
+      color: #A0A0FF;
+      padding: 30px;
+      border-radius: 8px;
+      border: 1px solid #A0A0FF;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #A0A0FF;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      line-height: 1;
+    }
+    .modal-close:hover {
+      color: #FFFFFF;
+    }
+    
+    /* Info Button */
+    #info-btn {
+      display: block;
+      width: 200px;
+      margin: 30px auto;
+      padding: 12px;
+      background-color: #A0A0FF;
+      color: #4040E0;
+      border: 2px solid #A0A0FF;
+      border-radius: 0px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+      font-family: 'C64ProMono', sans-serif;
+    }
+    #info-btn:hover {
+      background-color: #B0B0FF;
+    }
+  </style>
+</head>
+<body>
+<h1>**** TISAM - COMMODORE 64 GUI ****</h1>
+<!-- Italian Input Form -->
+<form>
+  <h2>Translitteratore Italiano per SAM</h2>
+  <div style="height:20px;"></div>
+  <p>
+    Inserisci del testo italiano oppure carica un file .txt e premi "Translittera" per convertirlo in fonemi leggibili da SAM. 
+	Premi "Say" per farlo parlare e "Download" per scaricare in .wav il testo letto da SAM.
+  </p>
+  <div style="height:20px;"></div>
+  <div>
+    <label class="textarea-label" for="italianinput">Testo in Italiano:</label>
+    <textarea id="italianinput">Ciao, sono il translitteratore italiano SAM. Volevo salutare tutti i miei amici italiani.</textarea>
+    <input type="file" id="file-input" accept=".txt" style="display: none;">
+	<div style="height:20px;"></div>
+    <div class="button-container">
+      <input type="button" id="loadfile" value="Carica .txt File">
+      <input type="button" id="cleartext" value="Pulisci testo">
+      <input type="button" id="copytosam" value="Copia in SAM">
+      <input type="button" id="transliterate" value="Translittera">
+    </div>
+  </div>
+</form>
+<div style="height:20px;"></div>
+<form>
+  <h2>Speak</h2>
+  <div>
+    <label class="textarea-label" for="speechinput">Text to speak:</label>
+    <textarea id="speechinput" name="textfield">Hello, my name is SAM.</textarea>
+	<div style="height:20px;"></div>
+    <label id="pitch-lbl" for="pitch">Pitch: 64</label>
+    <div class="slider-container" id="pitch-slider" data-min="0" data-max="255" data-value="64">
+      <div class="slider-track">
+        <div class="slider-fill"></div>
+      </div>
+      <div class="slider-thumb"></div>
+    </div>
+    <label id="speed-lbl" for="speed">Speed: 72</label>
+    <div class="slider-container" id="speed-slider" data-min="1" data-max="255" data-value="72">
+      <div class="slider-track">
+        <div class="slider-fill"></div>
+      </div>
+      <div class="slider-thumb"></div>
+    </div>
+    <label id="mouth-lbl" for="mouth">Mouth: 128</label>
+    <div class="slider-container" id="mouth-slider" data-min="0" data-max="255" data-value="128">
+      <div class="slider-track">
+        <div class="slider-fill"></div>
+      </div>
+      <div class="slider-thumb"></div>
+    </div>
+    <label id="throat-lbl" for="throat">Throat: 128</label>
+    <div class="slider-container" id="throat-slider" data-min="0" data-max="255" data-value="128">
+      <div class="slider-track">
+        <div class="slider-fill"></div>
+      </div>
+      <div class="slider-thumb"></div>
+    </div>
+   <div style="height:20px;"></div>
+    <div class="button-container">
+      <input type="button" id="say" value="Say">
+      <input type="button" id="download" value="Download">
+    </div>
+  </div>
+</form>
+
+<!-- Presets moved here -->
+<h2>Presets</h2>
+<table>
+  <thead>
+     <tr>
+      <th><font size="3"><b>Description</b></font></th>
+      <th><font size="3"><b>Speed</b></font></th>
+      <th><font size="3"><b>Pitch</b></font></th>
+      <th><font size="3"><b>Throat</b></font></th>
+      <th><font size="3"><b>Mouth</b></font></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><a id="preset_sam">SAM</a></td><td>72</td><td>64</td><td>128</td><td>128</td></tr>
+    <tr><td><a id="preset_elf">Elf</a></td><td>72</td><td>64</td><td>110</td><td>160</td></tr>
+    <tr><td><a id="preset_little_robot">Little Robot</a></td><td>92</td><td>60</td><td>190</td><td>190</td></tr>
+    <tr><td><a id="preset_stuffy_guy">Stuffy Guy</a></td><td>82</td><td>72</td><td>110</td><td>105</td></tr>
+    <tr><td><a id="preset_little_old_lady">Little Old Lady</a></td><td>82</td><td>32</td><td>145</td><td>145</td></tr>
+    <tr><td><a id="preset_extra_terrestrial">Extra-Terrestrial</a></td><td>100</td><td>64</td><td>150</td><td>200</td></tr>
+  </tbody>
+</table>
+
+
+<!-- Info Button -->
+<button id="info-btn">Info</button>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-content">
+    <button class="modal-close" id="modal-close">&times;</button>
+	<h2>Cosa e' TISAM?</h2>
+	<p>
+     E' uno script di translitterazione di fonemi italiani, che sfrutta la versione JavaScript di SAM – Software Automatic Mouth, 
+	 il celebre motore di Text-To-Speech (TTS) degli anni ’80 per Commodore 64. L’obiettivo del progetto è adattare la fonetica
+	 italiana al motore originale, che nasce per l’inglese, permettendo cosi' di ottenere una resa vocale piu' vicina possibile 
+	 ai suoni della nostra lingua.
+    </p>
+	
+	
+	<h2>Cosa e' SAM?</h2>
+    <p>
+    Sam e' un programma di sintesi vocale (Text-To-Speech, TTS) molto piccolo, scritto in Javascript, che funziona sulla maggior 
+	parte delle piattaforme più diffuse.E' un adattamento in Javascript del software di sintesi vocale SAM (Software Automatic Mouth)
+	per il Commodore C64, pubblicato nel 1982 da Don't Ask Software (ora SoftVoice, Inc.). Include un convertitore da testo a 
+	fonemi chiamato reciter e una routine da fonemi a voce per l’output finale.
+    </p>
+    <p>
+    Attualmente compatibile con Firefox, Chrome, Safari e iOS.
+    La conversione è stata eseguita manualmente a partire dal codice sorgente in C da
+    <a href="https://github.com/s-macke/SAM" target="_blank">Sebastian Macke</a>,
+    e le versioni rifattorizzate da
+    <a href="https://github.com/vidarh/SAM" target="_blank">Vidar Hokstad</a> and
+    <a href="https://github.com/8BitPimp/SAM" target="_blank">8BitPimp</a>
+    </p>
+    <p>
+    <a href="https://github.com/discordier/sam" target="_blank">Github Repository con il codice sorgente</a>
+    <a href="https://discordier.github.io/sam/demos.html" target="_blank">Lista con delle demo</a>
+    </p>
+	
+	
+	
+  </div>
+</div>
+
+<script src="samjs.min.js"></script>
+<script>
+  const opts = {debug: 1, pitch: 64, speed: 72, mouth: 128, throat: 128};
+  const presets = {
+    sam:               {speed: 72, pitch: 64, throat: 128, mouth: 128},
+    elf:               {speed: 72, pitch: 64, throat: 110, mouth: 160},
+    little_robot:      {speed: 92, pitch: 60, throat: 190, mouth: 190},
+    stuffy_guy:        {speed: 82, pitch: 72, throat: 110, mouth: 105},
+    little_old_lady:   {speed: 82, pitch: 32, throat: 145, mouth: 145},
+    extra_terrestrial: {speed: 100, pitch: 64, throat: 150, mouth: 200},
+  };
+
+  function fullItalianParser(text) {
+    const protectedWords = {
+      'tu': 'too', 'lui': 'loowee', 'lei': 'lay', 'loro': 'loro', 'ai':'hi','saro': 'sahro', 'sono': 'sohno', 
+	  'sei': 'sehih', 'siamo': 'see ahmo', 'siete': 'see ehtteh', 'hanno': 'ahnno', 'puo': 'poowo', 'puoi': 'poo oi',
+	  'possiamo': 'possyahmo', 'devo': 'dehvo', 'devi': 'dehvee', 'deve': 'dehve', 'vedo': 'vehdo', 'vedi': 'vehdee',
+      'vado': 'vahdo', 'vai': 'vahy', 'andiamo': 'andyamo', 'andate': 'andatteh',
+      'gia': 'jiah', 'giu': 'jiuw', 'piu': 'peeuw', 'meno': 'mehno', 'finche': 'feenkeh',
+      'benche': 'behnkeh', 'sebbene': 'sehbbehneh', 'poi': 'poee', 'mai': 'maee', 'gli' : 'jlee', 'glie' : 'jle eh',
+      'qua': 'kwah', 'qui': 'kwee', 'li': 'lee', 'la': 'lah', 'fuori': 'fwohree', 'dentro': 'dehntroh',
+      'si': 'see', 'no': 'noh', 'oh': 'ohh', 'eh': 'ehh', 'ah': 'ahh', 'uh': 'uhh', 'mah': 'mah', 'boh': 'boh',
+      'ciao': 'chao', 'gioco': 'g oh ko', 'giochi': 'g oh ki', 'gnocchi': 'kneeohkih','gnocco':'kneeohkoh',
+      'eccetera': 'eccheh tera', 'buono': 'bwohnoh', 'buongiorno': 'bwonjorno',
+      'realta': 'reh ah ltah', 'acciaio' : 'ahkchiah yoh', 'dice': 'dee cheh', 'dici': 'dee che',
+      'questo': 'kwehs toh', 'quello': 'kwehl loh', 'quando': 'kwahndo', 'quale': 'kwahleh',
+      'mio': 'meeoh', 'mia': 'meeah', 'miei': 'mee eh e', 'ahime': 'himeh',
+    };
+
+    const words = text.split(/(\s+|[.,!?;:])/);
+    let finalResult = '';
+
+    for (const part of words) {
+      if (!part) continue;
+      if (protectedWords[part]) {
+        finalResult += protectedWords[part];
+        continue;
+      }
+      if (part.match(/\s+|[.,!?;:]/)) {
+        finalResult += part;
+        continue;
+      }
+      
+      if (part === 'e') {
+        finalResult += 'eh';
+        continue;
+      }
+      if (part.startsWith('rea')) {
+        finalResult += 'reh a' + parseWord(part.substring(3));
+        continue;
+      }
+
+      finalResult += parseWord(part);
+    }
+    return finalResult;
+  }
+
+  function parseWord(word) {
+    let result = '';
+    let i = 0;
+    while (i < word.length) {
+      if (i + 2 < word.length) {
+        const s3 = word.substring(i, i + 3);
+        if (i === 0 && s3 === 'gno') { result += 'know'; i += 3; continue; }
+        if (i === 0 && s3 === 'cie') { result += 'chee eh'; i += 3; continue; }
+        if (s3 === 'gli') { result += 'ly'; i += 3; continue; }
+        if (s3 === 'cch' && 'ei'.includes(word[i+3]||'')) { result += 'k' + word[i+3]; i += 4; continue; }
+        if (s3 === 'sch' && 'ei'.includes(word[i+3]||'')) { result += 'sk' + word[i+3]; i += 4; continue; }
+      }
+
+      if (i + 1 < word.length) {
+        const s2 = word.substring(i, i + 2);
+        if (s2 === 'ai') { result += 'ahy'; i += 2; continue; }
+        if (s2 === 'ei') { result += 'ehy'; i += 2; continue; }
+        if (s2 === 'oi') { result += 'oy'; i += 2; continue; }
+        if (s2 === 'ui') { result += 'ooy'; i += 2; continue; }
+        if (s2 === 'au') { result += 'aow'; i += 2; continue; }
+        if (s2 === 'eu') { result += 'heh uh '; i += 2; continue; }
+        if (s2 === 'ch' && 'ei'.includes(word[i+2]||'')) { result += 'k' + word[i+2]; i += 3; continue; }
+        if (s2 === 'sc' && 'ei'.includes(word[i+2]||'')) { result += 'sh' + word[i+2]; i += 3; continue; }
+        if (s2 === 'gn') { result += 'ny'; i += 2; continue; }
+        if (s2 === 'zz') { result += 'tts'; i += 2; continue; }
+        if (s2 === 'qu') { result += 'kw'; i += 2; continue; }
+
+        if (i === 0 && s2 === 'ge') { result += 'ghe'; i += 2; continue; }
+
+        const isAtEnd = (i + 2 === word.length);
+        if (s2 === 'ce' && isAtEnd) { result += 'cheh'; i += 2; continue; }
+        if (s2 === 'ci' && isAtEnd) { result += 'chee'; i += 2; continue; }
+
+        if (s2 === 'ci' || s2 === 'ce') { result += 'ch' + s2[1]; i += 2; continue; }
+        if (s2 === 'gi' || s2 === 'ge') { result += 'j' + s2[1]; i += 2; continue; }
+        if (s2[0] === 'c' && 'aou'.includes(s2[1])) { result += 'k' + s2[1]; i += 2; continue; }
+      }
+
+      const s1 = word[i];
+      const next = word[i+1] || '';
+      const prev = word[i-1] || '';
+
+      if (s1 === 'z' && 'aeiou'.includes(prev) && 'aeiou'.includes(next)) { result += 'dz'; i += 1; continue; }
+      if (s1 === 'z') { result += 'ts'; i += 1; continue; }
+      if (s1 === 'c') { result += 'k'; i += 1; continue; }
+      if (s1 === 'h') { i += 1; continue; }
+      if (s1 === 't') { result += 'tt'; i += 1; continue; }
+      if (s1 === 'x') { result += 'ks'; i += 1; continue; }
+      if (s1 === 'a') { result += 'ah'; i += 1; continue; }
+      if (s1 === 'e') { result += 'eh'; i += 1; continue; }
+      if (s1 === 'i') { result += 'ee'; i += 1; continue; }
+      if (s1 === 'o') { result += 'oh'; i += 1; continue; }
+      if (s1 === 'u') { result += 'oo'; i += 1; continue; }
+
+      result += s1;
+      i += 1;
+    }
+    result = result.replace(/ttt/g, 'tt');
+    return result;
+  }
+
+  function transliterateItalian(text) {
+    let result = text;
+
+    result = result.replace(/\uFEFF/g, '');
+    result = result.replace(/[\u0000-\u001F\u007F-\u009F]/g, '');
+    result = result.replace(/[\u00A0\u1680\u2000-\u200B\u202F\u205F\u3000]/g, ' ');
+    result = result.replace(/[""]/g, '"');
+    result = result.replace(/['']/g, "'");
+    result = result.replace(/[––——'']/g, "-");
+    result = result.replace(/[…]/g, "...");
+    result = result.replace(/\s+/g, ' ').trim();
+    result = result.toLowerCase();
+    result = result.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+    result = fullItalianParser(result);
+
+    result = result.replace(/[^a-zA-Z0-9\s.,!?;:\-'"]/g, '');
+    result = result.replace(/\s+/g, ' ').trim();
+
+    return result;
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('speechinput');
+    const italianInput = document.getElementById('italianinput');
+    const fileInput = document.getElementById('file-input');
+    const modal = document.getElementById('modal');
+    const controls = {};
+
+    // Modal functionality
+    document.getElementById('info-btn').addEventListener('click', function() {
+      modal.classList.add('active');
+    });
+
+    document.getElementById('modal-close').addEventListener('click', function() {
+      modal.classList.remove('active');
+    });
+
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        modal.classList.remove('active');
+      }
+    });
+
+    // File loading functionality
+    document.getElementById('loadfile').addEventListener('click', function() {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (file && file.type === 'text/plain') {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          let content = e.target.result;
+          content = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+          italianInput.value = content;
+          fileInput.value = '';
+        };
+        reader.onerror = function() {
+          alert('Error loading file. Make sure it is a valid .txt file.');
+        };
+        reader.readAsText(file, 'UTF-8');
+      } else {
+        alert('Please select a valid .txt file.');
+      }
+    });
+
+    // Clear text button
+    document.getElementById('cleartext').addEventListener('click', function() {
+      italianInput.value = '';
+    });
+
+    // Copy to SAM button
+    document.getElementById('copytosam').addEventListener('click', function() {
+      const italianText = italianInput.value;
+      input.value = italianText;
+    });
+
+    // Transliteration button
+    document.getElementById('transliterate').addEventListener('click', function() {
+      const italianText = italianInput.value;
+      if (italianText.trim() === '') {
+        alert('Enter some Italian text or load a file before transliterating.');
+        return;
+      }
+      const transliterated = transliterateItalian(italianText);
+      input.value = transliterated;
+    });
+
+    const setOpt = (name, value) => {
+      opts[name] = value;
+      document.getElementById(name + '-lbl').innerText =
+        name.charAt(0).toUpperCase() + name.substring(1) + ': ' + value;
+    };
+    
+    function initSlider(name) {
+      const slider = document.getElementById(name + '-slider');
+      const fill = slider.querySelector('.slider-fill');
+      const thumb = slider.querySelector('.slider-thumb');
+      
+      let isDragging = false;
+      const min = parseFloat(slider.dataset.min);
+      const max = parseFloat(slider.dataset.max);
+      let value = parseFloat(slider.dataset.value);
+      
+      controls[name] = { 
+        getValue: () => value,
+        setValue: (v) => {
+          value = v;
+          updateSlider();
+        }
+      };
+      
+      function updateSlider() {
+        const percentage = ((value - min) / (max - min)) * 100;
+        thumb.style.right = percentage + '%';
+        fill.style.width = percentage + '%';
+        slider.dataset.value = value;
+        setOpt(name, value);
+      }
+      
+      function setValueFromX(x) {
+        const rect = slider.getBoundingClientRect();
+        const pos = Math.max(0, Math.min(rect.width, rect.right - x)) / rect.width;
+        value = Math.round(min + (max - min) * pos);
+        updateSlider();
+      }
+      
+      thumb.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        isDragging = true;
+      });
+      
+      thumb.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        isDragging = true;
+      });
+      
+      slider.addEventListener('click', (e) => {
+        if (e.target !== thumb) {
+          setValueFromX(e.clientX);
+        }
+      });
+      
+      slider.addEventListener('touchstart', (e) => {
+        if (e.target !== thumb) {
+          setValueFromX(e.touches[0].clientX);
+        }
+      });
+      
+      document.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+          setValueFromX(e.clientX);
+        }
+      });
+      
+      document.addEventListener('touchmove', (e) => {
+        if (isDragging) {
+          setValueFromX(e.touches[0].clientX);
+        }
+      });
+      
+      document.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
+      
+      document.addEventListener('touchend', () => {
+        isDragging = false;
+      });
+      
+      updateSlider();
+    }
+    
+    ['speed', 'pitch', 'mouth', 'throat'].forEach((name) => {
+      initSlider(name);
+    });
+    const selectPreset = (name) => {
+      const values = presets[name];
+      ['speed', 'pitch', 'mouth', 'throat'].forEach((name) => {
+        controls[name].setValue(values[name]);
+      });
+    };
+    selectPreset('sam');
+    Object.keys(presets).forEach((preset) => {
+      document.getElementById('preset_' + preset)
+        .addEventListener('click', () => selectPreset(preset));
+    });
+
+    let speech;
+    document.getElementById('say').addEventListener('click', function (e) {
+      e.preventDefault();
+      if (speech) {
+        speech.abort();
+      }
+      try {
+        if (typeof SamJs === 'undefined') {
+          alert('SAM library not loaded. Please ensure the SAM.js library is properly included.');
+          return;
+        }
+        speech = (new SamJs(opts)).speak(input.value);
+        speech.catch(() => {});
+      } catch (error) {
+        console.error('Error with SAM speech:', error);
+        alert('Error: Unable to generate speech. Please check the SAM library.');
+      }
+    });
+
+    document.getElementById('download').addEventListener('click', function (e) {
+      e.preventDefault();
+      try {
+        if (typeof SamJs === 'undefined') {
+          alert('SAM library not loaded. Please ensure the SAM.js library is properly included.');
+          return;
+        }
+        (new SamJs(opts)).download(input.value);
+      } catch (error) {
+        console.error('Error with SAM download:', error);
+        alert('Error: Unable to generate audio file. Please check the SAM library.');
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
