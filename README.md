@@ -1,40 +1,38 @@
-TISAM è uno script di translitterazione di fonemi italiani, basato sulla versione JavaScript di SAM – Software Automatic Mouth, 
-il celebre motore di Text-To-Speech (TTS) degli anni ’80 per Commodore 64. L’obiettivo del progetto è adattare la fonetica 
-italiana al motore originale, che nasce per l’inglese, permettendo così di ottenere una resa vocale più vicina possibile ai
-suoni della nostra lingua.
+TISAM
+
+TISAM è uno script di translitterazione dei fonemi italiani, basato sulla versione JavaScript di SAM (Software Automatic Mouth), il celebre motore di Text-To-Speech (TTS) per Commodore 64 degli anni ’80.
+L’obiettivo è adattare la fonetica italiana al motore originale, nato per l’inglese, ottenendo una resa vocale il più vicina possibile ai suoni della nostra lingua.
 
 Funzionamento
 
 Analizza il testo in italiano.
+
 Applica regole di translitterazione per avvicinare la scrittura alla fonetica inglese di SAM.
+
 Converte il risultato in fonemi compatibili con il motore TTS.
 
 Limiti
 
-Non perfetto: alcuni conflitti tra regole fonetiche possono produrre risultati imprevisti.
-Copertura parziale: non tutti i fonemi italiani hanno un corrispettivo diretto nell’inglese di SAM.
-Approssimazioni necessarie: certi suoni vengono resi in maniera vicina, ma non identica.
+Non perfetto: alcune regole possono produrre risultati imprevisti.
 
-Bug Noti
+Copertura parziale: non tutti i fonemi italiani hanno un corrispettivo diretto.
 
-L'inserimento di lettere accentate non funziona nello script originale di SAM 
-lo script TISAM rimuove gli accenti prima di translitterarli e inserirli nel form di SAM.
+Approssimazioni necessarie: alcuni suoni vengono resi in maniera simile, ma non identica.
+
+Bug noti
+
+L’inserimento di lettere accentate non funziona nello script originale di SAM.
+
+TISAM rimuove gli accenti prima di translitterare e inserire il testo nel form di SAM.
 
 Versioni
 
-tisam.html 
- - versione con lo script sovrapposto alla versione originale di SAM
+tisam.html
+Script integrato nella versione originale di SAM.
 
 tisamcompact.html
- - versione espansa dello script con la possibilità di caricare da file .txt, pulire la text area
-   con un click e copiare il testo italiano in SAM senza translitterazioni per eventuali paragoni
-   fonetici. Le info, link e i riferimenti gli autori originali sono stati spostati in un box accessibile
-   tramite tasto, Info a fondo pagina.
-   
-   
+Versione espansa: caricamento da file .txt, pulizia della text area con un click, copia diretta del testo italiano in SAM (senza translitterazioni) per confronti fonetici.
+Info, link e riferimenti agli autori originali sono spostati in un box accessibile dal tasto Info a fondo pagina.
+
 tisamC64.html
- - versione dello script con un interfaccia in stile Commodore 64 e la possibilità di caricare da file .txt,
-   pulire la text area con un click e copiare il testo italiano in SAM senza translitterazioni per eventuali
-   paragoni fonetici. Le info, link e i riferimenti gli autori originali sono stati spostati in un box accessibile
-   tramite tasto, Info a fondo pagina.
-   
+Interfaccia in stile Commodore 64, con le stesse funzioni della versione compatta.
