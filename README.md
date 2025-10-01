@@ -19,3 +19,22 @@ Bug Noti
 
 L'inserimento di lettere accentate non funziona nello script originale di SAM 
 lo script TISAM rimuove gli accenti prima di translitterarli e inserirli nel form di SAM.
+
+Versioni
+
+tisam.html 
+ - versione con lo script sovrapposto alla versione originale di SAM
+
+tisamcompact.html
+ - versione espansa dello script con la possibilità di caricare da file .txt, pulire la text area
+   con un click e copiare il testo italiano in SAM senza translitterazioni per eventuali paragoni
+   fonetici. Le info, link e i riferimenti gli autori originali sono stati spostati in un box accessibile
+   tramite tasto, Info a fondo pagina.
+   
+   
+tisamC64.html
+ - versione dello script con un interfaccia in stile Commodore 64 e la possibilità di caricare da file .txt,
+   pulire la text area con un click e copiare il testo italiano in SAM senza translitterazioni per eventuali
+   paragoni fonetici. Le info, link e i riferimenti gli autori originali sono stati spostati in un box accessibile
+   tramite tasto, Info a fondo pagina.
+   
