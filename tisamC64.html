@@ -50,6 +50,7 @@
       user-select: none;
       touch-action: none;
 	  margin-bottom: 15px;
+	  margin-left: 40px
     }
     
     .slider-track {
@@ -89,25 +90,48 @@
     }
     textarea {
       width: 100%;
-      min-height: 80px;
+      min-height: 160px;
       resize: vertical;
       box-sizing: border-box;
       background-color: #4040E0;
       color: #A0A0FF;
       border: 4px solid #A0A0FF;
       font-family: 'C64ProMono', sans-serif;
-      font-size: 12px;
+      font-size: 16px;
+	  line-height: 1.5;
 	  padding: 8px; 
+	  resize: vertical;
+      caret-color: transparent;
     }
+    .textarea-wrapper {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+    .blinking-cursor {
+      position: absolute;
+      background-color: #A0A0FF;
+      width: 25px; /* Larghezza approssimativa di un carattere C64 a 16px */
+      height: 25px; /* Altezza basata sulla font-size */
+      pointer-events: none;
+      display: none; /* Nascosto di default */
+      animation: blink 1s step-end infinite;
+    }
+	@keyframes blink {
+	  50% { opacity: 0; }
+	}
+	
     .textarea-label {
       font-weight: bold;
       display: block;
       margin-bottom: 5px;
       margin-top: 15px;
-    }
+	  font-size: 16px;
+	  }
+	  
 	table { width: 100%; margin: 20px 0; border-collapse: separate; border-spacing: 5px 8px; }
-	tr th { text-align: left; padding-bottom: 2px; }
-	tr td { padding: 5px 0; padding-left: 20px; }
+	tr th { text-align: left; padding-bottom: 2px;  font-size: 16px;}
+	tr td { padding: 5px 0; padding-left: 20px; font-size: 16px; }
     a { cursor: pointer; color: #C0C0FF; }
 	a:hover { color: #E0E0FF; }
     .button-container {
@@ -122,6 +146,13 @@
     #file-input {
       display: none;
     }
+	
+	.slider-wrapper {
+	  position: relative;
+	  left: 20px; /* sposta tutto a destra */
+	  font-size: 16px;
+	}
+
     
     /* Modal Styles */
     .modal-overlay {
@@ -143,9 +174,10 @@
       background-color: #4040E0;
       color: #A0A0FF;
       padding: 30px;
-      border-radius: 8px;
-      border: 1px solid #A0A0FF;
-      max-width: 600px;
+	  font-size: 16px;
+      border-radius: 0px;
+      border: 4px solid #A0A0FF;
+      max-width: 800px;
       max-height: 80vh;
       overflow-y: auto;
       position: relative;
@@ -186,39 +218,38 @@
     #info-btn:hover {
       background-color: #B0B0FF;
     }
+
   </style>
 </head>
 <body>
 <h1>**** TISAM - COMMODORE 64 GUI ****</h1>
 <!-- Italian Input Form -->
 <form>
-  <h2>Translitteratore Italiano per SAM</h2>
+  <h1>TRANSILITTERATORE ITALIANO PER SAM</h1>
   <div style="height:20px;"></div>
-  <p>
-    Inserisci del testo italiano oppure carica un file .txt e premi "Translittera" per convertirlo in fonemi leggibili da SAM. 
-	Premi "Say" per farlo parlare e "Download" per scaricare in .wav il testo letto da SAM.
-  </p>
-  <div style="height:20px;"></div>
+
   <div>
     <label class="textarea-label" for="italianinput">Testo in Italiano:</label>
     <textarea id="italianinput">Ciao, sono il translitteratore italiano per SAM. Volevo salutare tutti i miei amici italiani.</textarea>
     <input type="file" id="file-input" accept=".txt" style="display: none;">
 	<div style="height:20px;"></div>
     <div class="button-container">
-      <input type="button" id="loadfile" value="Carica .txt File">
-      <input type="button" id="cleartext" value="Pulisci testo">
-      <input type="button" id="copytosam" value="Copia in SAM">
-      <input type="button" id="transliterate" value="Translittera">
+      <input type="button" id="loadfile" value="CARICA FILE .TXT ">
+      <input type="button" id="cleartext" value="PULISCI TESTO">
+      <input type="button" id="copytosam" value="COPIA IN SAM">
+      <input type="button" id="transliterate" value="TRANSLITTERA">
     </div>
   </div>
 </form>
 <div style="height:20px;"></div>
 <form>
-  <h2>Speak</h2>
+  <h2>SPEAK</h2>
   <div>
     <label class="textarea-label" for="speechinput">Text to speak:</label>
     <textarea id="speechinput" name="textfield">Hello, my name is SAM.</textarea>
 	<div style="height:20px;"></div>
+	
+	<div class="slider-wrapper">
     <label id="pitch-lbl" for="pitch">Pitch: 64</label>
     <div class="slider-container" id="pitch-slider" data-min="0" data-max="255" data-value="64">
       <div class="slider-track">
@@ -247,24 +278,30 @@
       </div>
       <div class="slider-thumb"></div>
     </div>
+	</div>
+	
+	
    <div style="height:20px;"></div>
     <div class="button-container">
-      <input type="button" id="say" value="Say">
-      <input type="button" id="download" value="Download">
+      <input type="button" id="say" value="SAY">
+      <input type="button" id="download" value="DOWNLOAD">
     </div>
   </div>
 </form>
 
 <!-- Presets moved here -->
-<h2>Presets</h2>
+<div style="height:20px;"></div>
+<h2>PRESETS</h2>
+
+
 <table>
   <thead>
      <tr>
-      <th><font size="3"><b>Description</b></font></th>
-      <th><font size="3"><b>Speed</b></font></th>
-      <th><font size="3"><b>Pitch</b></font></th>
-      <th><font size="3"><b>Throat</b></font></th>
-      <th><font size="3"><b>Mouth</b></font></th>
+      <th><font size="3"><b>DESCRIPTION</b></font></th>
+      <th><font size="3"><b>SPEED</b></font></th>
+      <th><font size="3"><b>PITCH</b></font></th>
+      <th><font size="3"><b>THROAT</b></font></th>
+      <th><font size="3"><b>MOUTH</b></font></th>
     </tr>
   </thead>
   <tbody>
@@ -279,24 +316,29 @@
 
 
 <!-- Info Button -->
-<button id="info-btn">Info</button>
+<button id="info-btn">INFO</button>
 
 <!-- Modal -->
 <div class="modal-overlay" id="modal">
   <div class="modal-content">
     <button class="modal-close" id="modal-close">&times;</button>
+	<h2>Come usare TISAM</h2>
+	 <p>
+    Inserisci del testo italiano nella apposita area oppure puoi caricare da un file .txt e premi TRANSLITTERA 
+	per convertirlo in fonemi leggibili da SAM.  Premi SAY per farlo parlare e DOWNLOAD per scaricare in .wav 
+	il testo letto da SAM.
+     </p>
+	
 	<h2>Cosa e' TISAM?</h2>
 	<p>
-     E' uno script di translitterazione di fonemi italiani, che sfrutta la versione JavaScript di SAM – Software Automatic Mouth, 
-	 il celebre motore di Text-To-Speech (TTS) degli anni ’80 per Commodore 64. L’obiettivo del progetto e' adattare la fonetica
-	 italiana al motore originale, che nasce per l’inglese, permettendo cosi' di ottenere una resa vocale piu' vicina possibile 
+     E' uno script di translitterazione di fonemi italiani. L’obiettivo del progetto e' adattare la fonetica italiana al motore 
+	 originale, che nasce per l’inglese, permettendo cosi' di ottenere una resa vocale piu' vicina possibile 
 	 ai suoni della nostra lingua.
     </p>
 	
-	
 	<h2>Cosa e' SAM?</h2>
     <p>
-    Sam e' un programma di sintesi vocale (Text-To-Speech, TTS) molto piccolo, scritto in Javascript, che funziona sulla maggior 
+    SAM e' un programma di sintesi vocale (Text-To-Speech, TTS) molto piccolo, scritto in Javascript, che funziona sulla maggior 
 	parte delle piattaforme più diffuse.E' un adattamento in Javascript del software di sintesi vocale SAM (Software Automatic Mouth)
 	per il Commodore C64, pubblicato nel 1982 da Don't Ask Software (ora SoftVoice, Inc.). Include un convertitore da testo a 
 	fonemi chiamato reciter e una routine da fonemi a voce per l’output finale.
@@ -658,7 +700,77 @@
         alert('Error: Unable to generate audio file. Please check the SAM library.');
       }
     });
-  });
+  
+  // Cursore quadrato lampeggiante
+    document.fonts.ready.then(() => {
+      document.querySelectorAll("#italianinput, #speechinput").forEach(textarea => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'textarea-wrapper';
+        textarea.parentNode.insertBefore(wrapper, textarea);
+        wrapper.appendChild(textarea);
+
+        const cursor = document.createElement('span');
+        cursor.className = 'blinking-cursor';
+        wrapper.appendChild(cursor);
+
+        const mirror = document.createElement('div');
+        mirror.style.position = 'absolute';
+        mirror.style.left = '-9999px';
+        mirror.style.top = '0';
+        mirror.style.visibility = 'hidden';
+        document.body.appendChild(mirror);
+
+        function updateCursorPosition() {
+          if (!textarea.matches(':focus')) return;
+
+          const style = window.getComputedStyle(textarea);
+          const propertiesToCopy = [
+            'boxSizing', 'fontFamily', 'fontSize', 'fontWeight', 'fontStyle',
+            'letterSpacing', 'lineHeight', 'paddingTop', 'paddingRight',
+            'paddingBottom', 'paddingLeft', 'borderTopWidth', 'borderRightWidth',
+            'borderBottomWidth', 'borderLeftWidth', 'width', 'wordWrap', 'whiteSpace',
+            'wordBreak'
+          ];
+          propertiesToCopy.forEach(prop => {
+            mirror.style[prop] = style[prop];
+          });
+
+          const textUpToCursor = textarea.value.substring(0, textarea.selectionStart);
+          // Aggiunge uno spazio non divisibile se il testo termina con una nuova riga per un calcolo corretto dell'altezza
+          mirror.textContent = textUpToCursor.replace(/\n$/, '\n\u00a0');
+
+          const cursorMarker = document.createElement('span');
+          mirror.appendChild(cursorMarker);
+
+          const cursorTop = cursorMarker.offsetTop - textarea.scrollTop;
+          const cursorLeft = cursorMarker.offsetLeft - textarea.scrollLeft;
+          
+		  // Posizione cursore 
+          cursor.style.top = `${cursorTop - 2}px`;
+          cursor.style.left = `${cursorLeft + 6}px`;
+        }
+
+        textarea.addEventListener("focus", () => {
+          document.querySelectorAll(".blinking-cursor").forEach(c => c.style.display = 'none');
+          cursor.style.display = 'block';
+          requestAnimationFrame(updateCursorPosition);
+        });
+
+        textarea.addEventListener("blur", () => {
+          cursor.style.display = 'none';
+        });
+
+        textarea.addEventListener("input", updateCursorPosition);
+        textarea.addEventListener("click", updateCursorPosition);
+        textarea.addEventListener("keyup", updateCursorPosition);
+        textarea.addEventListener("scroll", updateCursorPosition);
+
+        const resizeObserver = new ResizeObserver(updateCursorPosition);
+        resizeObserver.observe(textarea);
+      });
+    }).catch(err => console.error('Font loading error:', err));
+		
+	});
 </script>
 
 </body>
