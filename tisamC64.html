@@ -58,8 +58,10 @@
       text-decoration: none;
     }
 
-    a:hover {
+    a:hover,
+    a:focus {
       color: var(--c64-white);
+      outline: none;
     }
 
     /* ========== Form Elements ========== */
@@ -93,6 +95,7 @@
       outline: none;
     }
 
+
     .textarea-label {
       display: block;
       margin-top: var(--spacing-medium);
@@ -121,8 +124,11 @@
     }
 
     input[type="button"]:hover,
-    .btn:hover {
+    .btn:hover,
+    input[type="button"]:focus,
+    .btn:focus {
       background-color: var(--c64-lighter-blue);
+      outline: none;
     }
 
     .button-container {
@@ -191,8 +197,10 @@
       z-index: 1;
     }
 
-    .slider-thumb:hover {
+    .slider-thumb:hover,
+    .slider-thumb:focus {
       background: var(--c64-lightest-blue);
+      outline: none;
     }
 
     .slider-thumb:active {
@@ -240,7 +248,8 @@
       color: var(--c64-light-blue);
     }
 
-    .presets-section a:hover {
+    .presets-section a:hover,
+    .presets-section a:focus {
       color: var(--c64-lightest-blue);
     }
 
@@ -918,11 +927,11 @@
         thumb.addEventListener('keydown', (e) => {
           if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
             e.preventDefault();
-            value = Math.max(min, value - 1);
+            value = Math.min(max, value + 1);
             this.updateSlider(slider, fill, thumb, value, min, max, name);
           } else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
             e.preventDefault();
-            value = Math.min(max, value + 1);
+            value = Math.max(min, value - 1);
             this.updateSlider(slider, fill, thumb, value, min, max, name);
           }
         });
@@ -1176,6 +1185,9 @@
         textarea.addEventListener("click", updateCursorPosition);
         textarea.addEventListener("keyup", updateCursorPosition);
         textarea.addEventListener("scroll", updateCursorPosition);
+        textarea.addEventListener("keydown", () => {
+            requestAnimationFrame(updateCursorPosition);
+        });
 
         const resizeObserver = new ResizeObserver(updateCursorPosition);
         resizeObserver.observe(textarea);
@@ -1291,6 +1303,17 @@
       CursorManager.init();
       TextareaManager.init();
       CustomCursor.init();
+
+      // Focus iniziale sulla textarea italiana con cursore alla fine
+      const italianTextarea = document.getElementById('italianinput');
+      if (italianTextarea) {
+        setTimeout(() => {
+          italianTextarea.focus();
+          const len = italianTextarea.value.length;
+          italianTextarea.setSelectionRange(len, len);
+          // La chiamata a updateCursorPosition viene già gestita dall'evento 'focus'
+        }, 100);
+      }
     });
 
     // ========== Textarea Manager ==========
