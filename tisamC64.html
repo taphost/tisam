@@ -22,8 +22,8 @@
 
     /* ========== Font Face ========== */
     @font-face {
-      font-family: 'C64ProMono';
-      src: url('./fonts/C64_Pro_Mono-STYLE.woff2') format('woff2');
+      font-family: 'Bescii Mono';
+      src: url('./fonts/Bescii-Mono.woff2') format('woff2');
       font-weight: normal;
       font-style: normal;
     }
@@ -42,7 +42,7 @@
       margin: var(--spacing-large) auto;
       padding: var(--spacing-xlarge);
       border: 80px solid var(--c64-light-blue);
-      font-family: 'C64ProMono', monospace, sans-serif;
+      font-family: 'Bescii Mono', monospace, sans-serif;
       font-size: var(--font-size-base);
       color: var(--c64-light-blue);
       box-sizing: content-box;
@@ -82,7 +82,7 @@
       background-color: var(--c64-blue);
       color: var(--c64-light-blue);
       border: 4px solid var(--c64-light-blue);
-      font-family: 'C64ProMono', monospace, sans-serif;
+      font-family: 'Bescii Mono', monospace, sans-serif;
       font-size: var(--font-size-medium);
       line-height: 1.5;
       resize: vertical;
@@ -118,7 +118,7 @@
       background-color: var(--c64-light-blue);
       color: var(--c64-blue);
       border: 2px solid var(--c64-light-blue);
-      font-family: 'C64ProMono', monospace, sans-serif;
+      font-family: 'Bescii Mono', monospace, sans-serif;
       font-size: var(--font-size-base);
       font-weight: bold;
     }
@@ -339,8 +339,8 @@
 
 <body>
   <!-- ========== Custom Cursors ========== -->
-  <span id="cursor-default" class="custom-cursor">&#x2191;</span>
-  <span id="cursor-pointer" class="custom-cursor">&#x2191;</span>
+  <span id="cursor-default" class="custom-cursor">&#x2B61;</span>
+  <span id="cursor-pointer" class="custom-cursor">&#x2B61;</span>
   <!-- ========== Header ========== -->
   <header>
     <h1>**** TISAM - COMMODORE 64 GUI ****</h1>
@@ -577,19 +577,19 @@
         il testo letto da SAM.
       </p>
 
-      <h2>Cosa e' TISAM ?</h2>
+      <h2>Cosa è TISAM ?</h2>
       <p>
         E' uno script di translitterazione di fonemi italiani. L'obiettivo del 
-        progetto e' adattare la fonetica italiana al motore originale, che nasce 
-        per l'inglese, permettendo cosi' di ottenere una resa vocale piu' vicina 
+        progetto è adattare la fonetica italiana al motore originale, che nasce 
+        per l'inglese, permettendo così di ottenere una resa vocale più vicina 
         possibile ai suoni della nostra lingua.
       </p>
 
-      <h2>Cosa e' SAM ?</h2>
+      <h2>Cosa è SAM ?</h2>
       <p>
-        SAM e' un programma di sintesi vocale (Text-To-Speech, TTS) molto piccolo, 
+        SAM è un programma di sintesi vocale (Text-To-Speech, TTS) molto piccolo, 
         scritto in Javascript, che funziona sulla maggior parte delle piattaforme 
-        piu' diffuse. E' un adattamento in Javascript del software di sintesi vocale 
+        più diffuse. É un adattamento in Javascript del software di sintesi vocale 
         SAM (Software Automatic Mouth) per il Commodore C64, pubblicato nel 1982 
         da Don't Ask Software (ora SoftVoice, Inc.). Include un convertitore da 
         testo a fonemi chiamato reciter e una routine da fonemi a voce per 
@@ -597,7 +597,7 @@
       </p>
       <p>
         Attualmente compatibile con Firefox, Chrome, Safari e iOS.
-        La conversione e' stata eseguita manualmente a partire dal codice sorgente 
+        La conversione è stata eseguita manualmente a partire dal codice sorgente 
         in C da
         <a href="https://github.com/s-macke/SAM" target="_blank" rel="noopener">
           Sebastian Macke
@@ -1253,8 +1253,8 @@
     // ========== Custom Cursor Manager ==========
     const CustomCursor = {
       config: {
-        fontSize: '24px',
-        color: 'var(--c64-blue)',
+        fontSize: '28px',
+        color: 'var(--c64-white)',
 		colorHover: 'var(--c64-light-blue)',
         rotationDefault: '-45deg', // Rotation for the default cursor
         rotationPointer: '-45deg'   // Rotation for the pointer cursor
