@@ -1020,6 +1020,17 @@
           content = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
           this.italianInput.value = content;
           this.fileInput.value = '';
+		  
+		  // Trigger resize della textarea
+		  this.italianInput.style.height = 'auto';
+		  this.italianInput.style.height = this.italianInput.scrollHeight + 'px';
+		  
+		  // Posiziona cursore alla fine e mostra il blinking cursor
+		  this.italianInput.focus();
+		  this.italianInput.setSelectionRange(content.length, content.length);
+		  
+		  // Trigger manual update del cursor position
+		  this.italianInput.dispatchEvent(new Event('input'));
         };
 
         reader.onerror = () => {
