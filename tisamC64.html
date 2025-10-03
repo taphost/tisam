@@ -670,7 +670,11 @@
         'acciaio': 'ahkchiah yoh', 'dice': 'dee cheh', 'dici': 'dee che',
         'questo': 'kwehs toh', 'quello': 'kwehl loh', 'quando': 'kwahndo',
         'quale': 'kwahleh', 'mio': 'meeoh', 'mia': 'meeah',
-        'miei': 'mee eh e', 'ahime': 'himeh'
+        'miei': 'mee eh e', 'ahime': 'himeh',
+		'A': 'ah', 'B': 'bee', 'C': 'che', 'D': 'dee','E': 'eh', 'F': 'ef feh', 'G': 'gee',
+        'H': 'ah kah', 'I': 'ee', 'K' : 'kappah','L': 'l eh', 'M': 'm eh', 'N': 'n eh', 'O': 'oh', 'P': 'pee',
+        'Q' : 'koo', 'R': 'eh reh',  'S': 'eh seh', 'T': 'tee', 'U': 'oo', 'V': 'vee', 
+        'X': 'eeks', 'Y': 'eep cilon', 'Z': 'zeh tah'	
       },
 
       parseWord(word) {
@@ -796,27 +800,37 @@
         for (const part of words) {
           if (!part) continue;
 
+          // Check for protected words using original case first (for uppercase letters)
           if (this.protectedWords[part]) {
             finalResult += this.protectedWords[part];
             continue;
           }
 
+          // If it's punctuation or space, add it and continue
           if (part.match(/\s+|[.,!?;:]/)) {
             finalResult += part;
             continue;
           }
 
-          if (part === 'e') {
+          // Now, work with lowercase for the rest of the logic
+          const lowerPart = part.toLowerCase();
+
+          if (this.protectedWords[lowerPart]) {
+            finalResult += this.protectedWords[lowerPart];
+            continue;
+          }
+
+          if (lowerPart === 'e') {
             finalResult += 'eh';
             continue;
           }
 
-          if (part.startsWith('rea')) {
-            finalResult += 'reh a' + this.parseWord(part.substring(3));
+          if (lowerPart.startsWith('rea')) {
+            finalResult += 'reh a' + this.parseWord(lowerPart.substring(3));
             continue;
           }
 
-          finalResult += this.parseWord(part);
+          finalResult += this.parseWord(lowerPart);
         }
 
         return finalResult;
@@ -834,7 +848,6 @@
         result = result.replace(/[––——'']/g, "-");
         result = result.replace(/[…]/g, "...");
         result = result.replace(/\s+/g, ' ').trim();
-        result = result.toLowerCase();
         result = result.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
         // Parse Italian phonetics
