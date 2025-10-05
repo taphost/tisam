@@ -1,0 +1,325 @@
+/* ========== CSS Variables ========== */
+:root {
+  --c64-blue: #4040E0;
+  --c64-light-blue: #A0A0FF;
+  --c64-lighter-blue: #B0B0FF;
+  --c64-lightest-blue: #C0C0FF;
+  --c64-white: #E0E0FF;
+  --font-size-base: 12px;
+  --font-size-medium: 16px;
+  --spacing-small: 5px;
+  --spacing-medium: 15px;
+  --spacing-large: 20px;
+  --spacing-xlarge: 40px;
+}
+
+/* ========== Font Face ========== */
+@font-face {
+  font-family: 'Bescii Mono';
+  src: url('./fonts/Bescii-Mono.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* ========== Base Styles ========== */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background-color: var(--c64-blue);
+}
+
+body {
+  width: 1024px;
+  margin: var(--spacing-large) auto;
+  padding: var(--spacing-xlarge);
+  border: 80px solid var(--c64-light-blue);
+  font-family: 'Bescii Mono', monospace, sans-serif;
+  font-size: var(--font-size-base);
+  color: var(--c64-light-blue);
+  box-sizing: content-box;
+}
+
+/* ========== Typography ========== */
+h1, h2 {
+  text-align: center;
+}
+
+a {
+  color: var(--c64-lightest-blue);
+  text-decoration: none;
+}
+
+a:hover,
+a:focus {
+  color: var(--c64-white);
+  outline: none;
+}
+
+/* ========== Form Elements ========== */
+label {
+  display: inline-block;
+  width: 30%;
+  vertical-align: top;
+}
+
+input {
+  width: 60%;
+}
+
+textarea {
+  width: 100%;
+  min-height: 160px;
+  padding: 8px;
+  background-color: var(--c64-blue);
+  color: var(--c64-light-blue);
+  border: 4px solid var(--c64-light-blue);
+  font-family: 'Bescii Mono', monospace, sans-serif;
+  font-size: var(--font-size-medium);
+  line-height: 1.5;
+  resize: none;   // impostare vertical per abilitarlo
+  overflow-y: hidden;
+  caret-color: transparent;
+}
+
+textarea:focus {
+  border-color: var(--c64-lighter-blue);
+  outline: none;
+}
+
+
+.textarea-label {
+  display: block;
+  margin-top: var(--spacing-medium);
+  margin-bottom: var(--spacing-small);
+  font-weight: bold;
+  font-size: var(--font-size-medium);
+}
+
+.textarea-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+/* ========== Buttons ========== */
+input[type="button"],
+.btn {
+  width: 49%;
+  padding: 8px;
+  background-color: var(--c64-light-blue);
+  color: var(--c64-blue);
+  border: 2px solid var(--c64-light-blue);
+  font-family: 'Bescii Mono', monospace, sans-serif;
+  font-size: var(--font-size-base);
+  font-weight: bold;
+}
+
+input[type="button"]:hover,
+.btn:hover,
+input[type="button"]:focus,
+.btn:focus {
+  background-color: var(--c64-lighter-blue);
+  outline: none;
+}
+
+.button-container {
+  display: flex;
+  gap: 2%;
+  margin-top: 10px;
+}
+
+.button-container input[type="button"] {
+  flex: 1;
+  margin: 0;
+}
+
+#info-btn {
+  display: block;
+  width: 200px;
+  margin: 30px auto;
+  padding: 12px;
+  font-size: var(--font-size-medium);
+}
+
+#file-input {
+  display: none;
+}
+
+/* ========== Custom Sliders ========== */
+.slider-wrapper {
+  position: relative;
+  left: var(--spacing-large);
+  font-size: var(--font-size-medium);
+}
+
+.slider-container {
+  position: relative;
+  width: 60%;
+  display: inline-block;
+  margin-bottom: var(--spacing-medium);
+  margin-left: var(--spacing-xlarge);
+  user-select: none;
+  touch-action: none;
+}
+
+.slider-track {
+  position: relative;
+  height: 15px;
+  border: 4px solid var(--c64-light-blue);
+  background: transparent;
+}
+
+.slider-fill {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  background: var(--c64-light-blue);
+  pointer-events: none;
+}
+
+.slider-thumb {
+  position: absolute;
+  top: 50%;
+  width: 25px;
+  height: 25px;
+  background: var(--c64-light-blue);
+  transform: translate(50%, -50%);
+  z-index: 1;
+}
+
+.slider-thumb:hover,
+.slider-thumb:focus {
+  background: var(--c64-lightest-blue);
+  outline: none;
+}
+
+.slider-thumb:active {
+  cursor: grabbing;
+}
+
+/* ========== Blinking Cursor ========== */
+.blinking-cursor {
+  position: absolute;
+  pointer-events: none;
+  display: none;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ========== Table ========== */
+table {
+  width: 100%;
+  margin: var(--spacing-large) 0;
+  border-collapse: separate;
+  border-spacing: var(--spacing-small) 8px;
+}
+
+thead th {
+  text-align: left;
+  padding-bottom: 2px;
+  font-size: var(--font-size-medium);
+}
+
+tbody td {
+  padding: var(--spacing-small) 0;
+  padding-left: var(--spacing-large);
+  font-size: var(--font-size-medium);
+}
+
+.presets-section a {
+  color: var(--c64-light-blue);
+}
+
+.presets-section a:hover,
+.presets-section a:focus {
+  color: var(--c64-lightest-blue);
+}
+
+/* ========== Modal ========== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+}
+
+.modal-overlay.active {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  position: relative;
+  max-width: 1000px;
+  max-height: 80vh;
+  padding: 30px;
+  background-color: var(--c64-blue);
+  color: var(--c64-light-blue);
+  border: 4px solid var(--c64-light-blue);
+  border-radius: 0;
+  font-size: var(--font-size-medium);
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--c64-light-blue);
+  font-size: 28px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  color: var(--c64-white);
+}
+
+/* ========== Spacing Utilities ========== */
+.spacer-small {
+  height: 10px;
+}
+
+.spacer-medium {
+  height: var(--spacing-large);
+}
+
+
+/* ========== Text Selection ========== */
+::selection {
+  background-color: var(--c64-light-blue);
+  color: var(--c64-blue);
+}
+	
+/* ========== Hide Native Cursor ========== */
+  *, *::before, *::after {
+  cursor: none !important;
+}
+
+
+/* ========== Custom Cursor ========== */
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  /* transform is now handled by JS */
+  display: none;
+  z-index: 9999;
+}
