@@ -152,9 +152,9 @@ SAM è un sintetizzatore vocale formant-based compatto scritto in JavaScript, po
 
 **Pipeline SAM**
 
-- **1.Reciter:** Converte testo in fonemi (per inglese)
-- **2.Parser:** Processa fonemi in parametri articolatori
-- **3.Renderer:** Genera samples audio da parametri
+1. **Reciter:** Converte testo in fonemi (per inglese)
+2. **Parser:** Processa fonemi in parametri articolatori
+3. **Renderer:** Genera samples audio da parametri
 
 TISAM bypassa il Reciter sostituendolo con il proprio parser italiano.
 
@@ -171,10 +171,10 @@ TISAM bypassa il Reciter sostituendolo con il proprio parser italiano.
 
 **JavaScript Ports**
 
-- **Sebastian Macke** - Conversione C → JS
-- **Vidar Hokstad** - Refactoring
-- **8BitPimp** - Ottimizzazioni
-- **Discordier** - Versione attuale
+- **[Sebastian Macke](https://github.com/s-macke/SAM)** - Conversione C → JS
+- **[Vidar Hokstad](https://github.com/vidarh/SAM)** - Refactoring
+- **[8BitPimp](https://github.com/8BitPimp/SAM)** - Ottimizzazioni
+- **[Discordier](https://github.com/discordier/sam)** - Versione attuale
 
 
 **TISAM**
