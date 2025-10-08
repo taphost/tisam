@@ -97,7 +97,7 @@ tisam/
 ```
 
 
-🧠 **Il Parser**
+## **🧠 Il Parser**
 
 Il sistema di translitterazione opera su tre livelli:
 
@@ -121,7 +121,8 @@ Il sistema di translitterazione opera su tre livelli:
 - Pulizia caratteri non-ASCII residui
 - Normalizzazione spazi
 
-⚠️ **Limitazioni**
+## **⚠️ Limitazioni**
+
 **Tecniche**
 
 **Fonemi approssimativi:** Non tutti i suoni italiani hanno corrispondenza in SAM
@@ -135,7 +136,7 @@ Il sistema di translitterazione opera su tre livelli:
 Richiede Web Audio API (IE non supportato)
 Ottimizzato per desktop (mobile usabile ma con limitazioni UI)
 
-📚 Tecnologie
+## **📚 Tecnologie**
 **Core**
 
 **SAM (JavaScript port):** Engine TTS originale C64
@@ -150,7 +151,7 @@ Ottimizzato per desktop (mobile usabile ma con limitazioni UI)
 **ARIA:** Accessibilità componenti custom
 **ResizeObserver:** Auto-resize textarea
 
-🎨 **Design System**
+## **🎨 Design System**
 **Palette C64**
 --c64-blue: #4040E0          /* Background principale */
 --c64-light-blue: #A0A0FF    /* Testo e bordi */
@@ -159,14 +160,14 @@ Ottimizzato per desktop (mobile usabile ma con limitazioni UI)
 --c64-white: #E0E0FF         /* Highlights */
 
 
-Typography
+**Typography**
 
-Font: Bescii Mono (WOFF2)
-Sizes: 12px (base), 16px (medium)
-Line-height: 1.5
-Monospace rendering
+- Font: **Bescii Mono** (WOFF2)
+- Sizes: 12px (base), 16px (medium)
+- Line-height: 1.5
+- Monospace rendering
 
-🔊 SAM Engine
+## **🔊 SAM Engine**
 SAM è un sintetizzatore vocale formant-based compatto scritto in JavaScript, portato dal software originale per Commodore C64.
 Pipeline SAM
 
@@ -175,45 +176,40 @@ Parser: Processa fonemi in parametri articolatori
 Renderer: Genera samples audio da parametri
 
 TISAM bypassa il Reciter sostituendolo con il proprio parser italiano.
-Specifiche Audio
 
-Sample rate: 22050 Hz
-Bit depth: 8-bit unsigned
-Channels: Mono
-Format: PCM WAV
+**Specifiche Audio**
 
-🤝 Crediti
+- Sample rate: 22050 Hz
+- Bit depth: 8-bit unsigned
+- Channels: Mono
+- Format: PCM WAV
+
+## **🤝 Crediti**
 SAM Original
 
-Don't Ask Software (1982) - Software originale C64
-Ora SoftVoice, Inc.
+**Don't Ask Software (1982)** - Software originale C64
+Ora **SoftVoice, Inc.**
 
-JavaScript Ports
+**JavaScript Ports**
 
 Sebastian Macke - Conversione C → JS
 Vidar Hokstad - Refactoring
 8BitPimp - Ottimizzazioni
 Discordier - Versione attuale
 
-TISAM
+**TISAM**
 Script di translitterazione italiana sviluppato per questo progetto.
-📄 Licenza
+
+## **📄 Licenza**
+
 Questo progetto è rilasciato sotto licenza MIT. Vedi LICENSE per dettagli.
-🐛 Bug Noti
+
+
+
+## **🐛 Bug Noti**
 
 Lettere accentate non funzionano nello script originale SAM (vengono rimosse in pre-processing)
 Alcuni pattern consonantici complessi possono produrre risultati imprevisti
 La qualità vocale dipende fortemente dal testo di input
-
-🔮 Sviluppi Futuri
-
- Miglioramento dizionario parole protette
- Gestione stress tonico e intonazione
- Supporto dialetti regionali
- Export parametri preset custom
- Modalità debug con phoneme visualization
-
-
-TISAM - Portare SAM del 1982 alla lingua italiana, un fonema alla volta.
 
 
