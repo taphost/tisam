@@ -78,10 +78,9 @@ Clicca **SAY** per ascoltare o **DOWNLOAD** per salvare
 - **Mouth** (0-255): Risonanza cavità orale
 - **Throat** (0-255): Risonanza laringea
 
-🔧 Architettura
+## **🔧 Architettura**
 
-
-## Struttura File
+**Struttura File**
 
 ```
 tisam/
@@ -124,42 +123,39 @@ Il sistema di translitterazione opera su tre livelli:
 ## **⚠️ Limitazioni**
 
 **Tecniche**
-
-**Fonemi approssimativi:** Non tutti i suoni italiani hanno corrispondenza in SAM
-**Accenti perduti:** SAM non supporta lettere accentate, vengono normalizzate
-**Contesto limitato:** Alcune regole dipendono solo dal contesto locale
-**Omografi:** Parole identiche con pronuncia diversa non sono disambiguate
-
+- **Fonemi approssimativi:** Non tutti i suoni italiani hanno corrispondenza in SAM
+- **Accenti perduti:** SAM non supporta lettere accentate, vengono normalizzate
+- **Contesto limitato:** Alcune regole dipendono solo dal contesto locale
+- **Omografi:** Parole identiche con pronuncia diversa non sono disambiguate
 
 **Browser**
 
-Richiede Web Audio API (IE non supportato)
-Ottimizzato per desktop (mobile usabile ma con limitazioni UI)
+- Richiede Web Audio API (IE non supportato)
+- Ottimizzato per desktop (mobile usabile ma con limitazioni UI)
 
 ## **📚 Tecnologie**
+
 **Core**
-
-**SAM (JavaScript port):** Engine TTS originale C64
-**Vanilla JavaScript:** Zero dipendenze esterne
-**Web Audio API:** Playback sintesi vocale
-**FileReader API:** Caricamento file locali
-
+- **SAM (JavaScript port):** Engine TTS originale C64
+- **Vanilla JavaScript:** Zero dipendenze esterne
+- **Web Audio API:** Playback sintesi vocale
+- **FileReader API:** Caricamento file locali
+  
 **UI/UX**
-
-**CSS Custom Properties:** Theming C64
-**Custom Elements:** Slider, cursor, textarea
-**ARIA:** Accessibilità componenti custom
-**ResizeObserver:** Auto-resize textarea
+- **CSS Custom Properties:** Theming C64
+- **Custom Elements:** Slider, cursor, textarea
+- **ARIA:** Accessibilità componenti custom
+- **ResizeObserver:** Auto-resize textarea
 
 ## **🎨 Design System**
 **Palette C64**
+```
 --c64-blue: #4040E0          /* Background principale */
 --c64-light-blue: #A0A0FF    /* Testo e bordi */
 --c64-lighter-blue: #B0B0FF  /* Hover states */
 --c64-lightest-blue: #C0C0FF /* Focus states */
 --c64-white: #E0E0FF         /* Highlights */
-
-
+```
 **Typography**
 
 - Font: **Bescii Mono** (WOFF2)
@@ -169,42 +165,39 @@ Ottimizzato per desktop (mobile usabile ma con limitazioni UI)
 
 ## **🔊 SAM Engine**
 SAM è un sintetizzatore vocale formant-based compatto scritto in JavaScript, portato dal software originale per Commodore C64.
-Pipeline SAM
 
-Reciter: Converte testo in fonemi (per inglese)
-Parser: Processa fonemi in parametri articolatori
-Renderer: Genera samples audio da parametri
+**Pipeline SAM**
+
+- **1.Reciter:** Converte testo in fonemi (per inglese)
+- **2.Parser:** Processa fonemi in parametri articolatori
+- **3.Renderer:** Genera samples audio da parametri
 
 TISAM bypassa il Reciter sostituendolo con il proprio parser italiano.
 
 **Specifiche Audio**
-
 - Sample rate: 22050 Hz
 - Bit depth: 8-bit unsigned
 - Channels: Mono
 - Format: PCM WAV
 
 ## **🤝 Crediti**
-SAM Original
-
-**Don't Ask Software (1982)** - Software originale C64
-Ora **SoftVoice, Inc.**
+**SAM Original**
+- **Don't Ask Software (1982)**- Software originale C64
+- Ora **SoftVoice, Inc.**
 
 **JavaScript Ports**
 
-Sebastian Macke - Conversione C → JS
-Vidar Hokstad - Refactoring
-8BitPimp - Ottimizzazioni
-Discordier - Versione attuale
+- **Sebastian Macke** - Conversione C → JS
+- **Vidar Hokstad** - Refactoring
+- **8BitPimp** - Ottimizzazioni
+- **Discordier** - Versione attuale
+
 
 **TISAM**
 Script di translitterazione italiana sviluppato per questo progetto.
 
 ## **📄 Licenza**
-
-Questo progetto è rilasciato sotto licenza MIT. Vedi LICENSE per dettagli.
-
-
+MIT License - Sentiti libero di usare e modificare per i tuoi progetti.
 
 ## **🐛 Bug Noti**
 
