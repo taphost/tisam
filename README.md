@@ -178,7 +178,6 @@ TISAM bypassa il Reciter sostituendolo con il proprio parser italiano.
 
 
 **TISAM**
-
 Script di translitterazione italiana sviluppato per questo progetto.
 
 ## **📄 Licenza**
