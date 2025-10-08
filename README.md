@@ -121,15 +121,13 @@ Il sistema di translitterazione opera su tre livelli:
 - Normalizzazione spazi
 
 ## **⚠️ Limitazioni**
-
 **Tecniche**
 - **Fonemi approssimativi:** Non tutti i suoni italiani hanno corrispondenza in SAM
 - **Accenti perduti:** SAM non supporta lettere accentate, vengono normalizzate
 - **Contesto limitato:** Alcune regole dipendono solo dal contesto locale
 - **Omografi:** Parole identiche con pronuncia diversa non sono disambiguate
-
+  
 **Browser**
-
 - Richiede Web Audio API (IE non supportato)
 - Ottimizzato per desktop (mobile usabile ma con limitazioni UI)
 
@@ -156,7 +154,6 @@ SAM è un sintetizzatore vocale formant-based compatto scritto in JavaScript, po
 2. **Parser:** Processa fonemi in parametri articolatori
 3. **Renderer:** Genera samples audio da parametri
 
-TISAM bypassa il Reciter sostituendolo con il proprio parser italiano.
 
 **Specifiche Audio**
 - Sample rate: 22050 Hz
@@ -176,10 +173,6 @@ TISAM bypassa il Reciter sostituendolo con il proprio parser italiano.
 - **[8BitPimp](https://github.com/8BitPimp/SAM)** - Ottimizzazioni
 - **[Discordier](https://github.com/discordier/sam)** - Versione attuale
 
-
-**TISAM**
-Script di translitterazione italiana sviluppato per questo progetto.
-
 ## **📄 Licenza**
 MIT License - Sentiti libero di usare e modificare per i tuoi progetti.
 
@@ -187,6 +180,6 @@ MIT License - Sentiti libero di usare e modificare per i tuoi progetti.
 
 Lettere accentate non funzionano nello script originale SAM (vengono rimosse in pre-processing)
 Alcuni pattern consonantici complessi possono produrre risultati imprevisti
-La qualità vocale dipende fortemente dal testo di input
+La qualità vocale dipende fortemente dal testo di input.
 
 
