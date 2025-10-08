@@ -6,6 +6,7 @@ Un sistema di translitterazione fonetica che adatta il testo italiano al motore 
 
 ![TISAM](https://img.shields.io/badge/C64-Style-4040E0)
 ![TTS](https://img.shields.io/badge/TTS-SAM-blue)
+![License](https://img.shields.io/badge/license-MIT-yellow.svg)
 
 ## 📖 Cos'è TISAM?
 
