@@ -65,13 +65,10 @@ Apri index.html in un browser moderno (Firefox, Chrome, Safari, Edge).
 
 ## Workflow Base
 
-1.Inserisci o carica testo italiano nell'area superiore
-
-2.Clicca **TRANSLITTERA** per convertire
-
-3.Regola i parametri vocali (opzionale)
-
-4.Clicca **SAY** per ascoltare o **DOWNLOAD** per salvare
+1. Inserisci o carica testo italiano nell'area superiore
+2. Clicca **TRANSLITTERA** per convertire
+3. Regola i parametri vocali (opzionale)
+4. Clicca **SAY** per ascoltare o **DOWNLOAD** per salvare
 
 
 ## Parametri Vocali
