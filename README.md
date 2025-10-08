@@ -63,13 +63,15 @@ cd tisam
 Apri index.html in un browser moderno (Firefox, Chrome, Safari, Edge).
 ```
 
-
 ## Workflow Base
 
-Inserisci o carica testo italiano nell'area superiore
-Clicca **TRANSLITTERA** per convertire
-Regola i parametri vocali (opzionale)
-Clicca **SAY** per ascoltare o **DOWNLOAD** per salvare
+1.Inserisci o carica testo italiano nell'area superiore
+
+2.Clicca **TRANSLITTERA** per convertire
+
+3.Regola i parametri vocali (opzionale)
+
+4.Clicca **SAY** per ascoltare o **DOWNLOAD** per salvare
 
 
 ## Parametri Vocali
@@ -147,22 +149,6 @@ Il sistema di translitterazione opera su tre livelli:
 - **Custom Elements:** Slider, cursor, textarea
 - **ARIA:** Accessibilità componenti custom
 - **ResizeObserver:** Auto-resize textarea
-
-## **🎨 Design System**
-**Palette C64**
-```
---c64-blue: #4040E0          /* Background principale */
---c64-light-blue: #A0A0FF    /* Testo e bordi */
---c64-lighter-blue: #B0B0FF  /* Hover states */
---c64-lightest-blue: #C0C0FF /* Focus states */
---c64-white: #E0E0FF         /* Highlights */
-```
-**Typography**
-
-- Font: **Bescii Mono** (WOFF2)
-- Sizes: 12px (base), 16px (medium)
-- Line-height: 1.5
-- Monospace rendering
 
 ## **🔊 SAM Engine**
 SAM è un sintetizzatore vocale formant-based compatto scritto in JavaScript, portato dal software originale per Commodore C64.
