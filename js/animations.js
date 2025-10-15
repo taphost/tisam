@@ -169,7 +169,6 @@ TISAM_APP.CursorManager = {
     const cursor = document.createElement('span');
     cursor.className = 'blinking-cursor';
     
-    // Apply styles from config
     cursor.style.width = this.config.width;
     cursor.style.height = this.config.height;
     cursor.style.backgroundColor = this.config.backgroundColor;
@@ -200,7 +199,8 @@ TISAM_APP.CursorManager = {
       mirror.style.width = `${contentWidth}px`;
 
       const textUpToCursor = textarea.value.substring(0, textarea.selectionStart);
-      mirror.textContent = textUpToCursor.replace(/\n$/, '\n\u00a0');
+      // Preserva spazi multipli convertendoli in non-breaking spaces
+      mirror.textContent = textUpToCursor.replace(/ {2,}/g, match => '\u00a0'.repeat(match.length)).replace(/\n$/, '\n\u00a0');
 
       const cursorMarker = document.createElement('span');
       mirror.appendChild(cursorMarker);
@@ -228,8 +228,41 @@ TISAM_APP.CursorManager = {
     textarea.addEventListener("click", updateCursorPosition);
     textarea.addEventListener("keyup", updateCursorPosition);
     textarea.addEventListener("scroll", updateCursorPosition);
-    textarea.addEventListener("keydown", () => {
-        requestAnimationFrame(updateCursorPosition);
+    textarea.addEventListener("keydown", (e) => {
+        if (e.key === ' ') {
+          requestAnimationFrame(() => {
+            const style = window.getComputedStyle(textarea);
+            const rect = textarea.getBoundingClientRect();
+            const maxWidth = rect.width - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight) - parseFloat(style.borderLeftWidth) - parseFloat(style.borderRightWidth);
+            
+            const tempSpan = document.createElement('span');
+            tempSpan.style.cssText = `position:absolute;visibility:hidden;font-family:${style.fontFamily};font-size:${style.fontSize};font-weight:${style.fontWeight};white-space:nowrap;`;
+            
+            const textBeforeCursor = textarea.value.substring(0, textarea.selectionStart);
+            const lines = textBeforeCursor.split('\n');
+            const currentLine = lines[lines.length - 1];
+            
+            tempSpan.textContent = currentLine;
+            document.body.appendChild(tempSpan);
+            const lineWidth = tempSpan.offsetWidth;
+            document.body.removeChild(tempSpan);
+            
+            if (lineWidth >= maxWidth - 20) {
+              const lineStartPos = textarea.selectionStart - currentLine.length;
+              const lastSpaceInLine = currentLine.lastIndexOf(' ');
+              
+              if (lastSpaceInLine !== -1) {
+                const breakPos = lineStartPos + lastSpaceInLine;
+                const cursorPos = textarea.selectionStart;
+                textarea.value = textarea.value.substring(0, breakPos) + '\n' + textarea.value.substring(breakPos + 1);
+                textarea.selectionStart = textarea.selectionEnd = cursorPos;
+              }
+            }
+            updateCursorPosition();
+          });
+        } else {
+          requestAnimationFrame(updateCursorPosition);
+        }
     });
 
     const resizeObserver = new ResizeObserver(updateCursorPosition);
@@ -246,8 +279,8 @@ TISAM_APP.CustomCursor = {
     colorHover: 'var(--c64-light-blue)',
     rotationDefault: '-45deg',
     rotationPointer: '-45deg',
-    offsetX: 10, // Horizontal offset in pixels
-    offsetY: 10  // Vertical offset in pixels
+    offsetX: 10,
+    offsetY: 10
   },
 
   init() {
