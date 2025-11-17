@@ -164,7 +164,7 @@ SAM è un sintetizzatore vocale formant-based compatto scritto in JavaScript, po
 ## **🤝 Crediti**
 **SAM Original**
 - **Don't Ask Software (1982)**- Software originale C64
-- Ora **SoftVoice, Inc.**
+- **SoftVoice, Inc.**
 
 **JavaScript Ports**
 
