@@ -246,7 +246,12 @@ TISAM_APP.FileHandler = {
   },
 
   loadFile(file) {
-    if (!file || file.type !== 'text/plain') {
+    if (!file) {
+      alert('Please select a valid .txt file.');
+      return;
+    }
+
+    if (file.type && file.type !== 'text/plain') {
       alert('Please select a valid .txt file.');
       return;
     }
@@ -280,7 +285,7 @@ TISAM_APP.SamSpeech = {
   speech: null,
 
   speak() {
-    if (this.speech) {
+    if (this.speech && typeof this.speech.abort === 'function') {
       this.speech.abort();
     }
 
@@ -324,6 +329,7 @@ TISAM_APP.EventHandlers = {
 
     document.getElementById('cleartext').addEventListener('click', () => {
       italianInput.value = '';
+      italianInput.style.height = 'auto';
       italianInput.focus();
     });
 
