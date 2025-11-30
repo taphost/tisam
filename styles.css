@@ -11,6 +11,7 @@
   --spacing-medium: 15px;
   --spacing-large: 20px;
   --spacing-xlarge: 40px;
+  --scrollbar-size: 6px;
 }
 
 /* ========== Font Face ========== */
@@ -78,7 +79,7 @@ textarea {
   font-family: 'Bescii Mono', monospace, sans-serif;
   font-size: var(--font-size-medium);
   line-height: 1.5;
-  resize: none;   // impostare vertical per abilitarlo
+  resize: none; /* impostare vertical per abilitarlo */
   overflow-y: hidden;
   caret-color: transparent;
 }
@@ -322,4 +323,36 @@ tbody td {
   /* transform is now handled by JS */
   display: none;
   z-index: 9999;
+}
+
+/* ========== Custom Scrollbar (Firefox) ========== */
+* {
+  scrollbar-width: auto;
+  scrollbar-color: var(--c64-light-blue) var(--c64-blue);
+}
+
+/* ========== Custom Scrollbar (WebKit) ========== */
+*::-webkit-scrollbar {
+  width: var(--scrollbar-size);
+  height: var(--scrollbar-size);
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--c64-blue);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--c64-light-blue);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--c64-lighter-blue);
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background: var(--c64-lighter-blue);
+}
+
+*::-webkit-scrollbar-corner {
+  background: var(--c64-blue);
 }
